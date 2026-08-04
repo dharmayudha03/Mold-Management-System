@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    DirectoryIndex index.php
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Automatically serve static assets from public/ folder
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(css|js|images|img|fonts|vendor|build|uploads|storage|favicon\.ico)/(.*)$ public/$1/$2 [L,NC]
+
+    # Handle Front Controller for Laravel routes
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>

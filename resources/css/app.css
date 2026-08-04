@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar for AdminLTE Sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6366f1;
+}
+
+/* Perfect Height & Aesthetic Uniformity for Form Selects */
+select {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    box-sizing: border-box !important;
+}
+
+/* RESET TomSelect Outer Wrapper to prevent Double-Border / Double-Box artifact */
+.ts-wrapper {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    height: 42px !important;
+}
+
+/* TomSelect Single Clean Box (100% Identical to Native Input) */
+.ts-wrapper .ts-control {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    background-color: #0f172a !important; /* bg-slate-900 */
+    border: 1px solid #1e293b !important; /* border-slate-800 */
+    border-radius: 0.75rem !important; /* rounded-xl */
+    padding: 0 0.875rem !important;
+    color: #ffffff !important;
+    font-size: 0.875rem !important;
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+.ts-wrapper.focus .ts-control {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
+}
+
+.ts-wrapper .ts-control input {
+    color: #ffffff !important;
+    font-size: 0.875rem !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+}
+
+.ts-wrapper .ts-control .item {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ts-wrapper .ts-control .placeholder {
+    color: #64748b !important;
+    font-size: 0.875rem !important;
+}
+
+/* Dropdown Menu Styling */
+.ts-dropdown {
+    background-color: #0f172a !important;
+    border: 1px solid #334155 !important;
+    color: #f8fafc !important;
+    border-radius: 0.75rem !important;
+    margin-top: 4px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+    z-index: 50 !important;
+    overflow: hidden !important;
+    padding: 4px !important;
+}
+
+.ts-dropdown .option {
+    padding: 0.5rem 0.875rem !important;
+    color: #cbd5e1 !important;
+    border-radius: 0.5rem !important;
+    font-size: 0.875rem !important;
+    cursor: pointer !important;
+}
+
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active,
+.ts-dropdown .option.selected {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.ts-wrapper.single .ts-control:after {
+    border-color: #94a3b8 transparent transparent transparent !important;
+    border-width: 5px 4px 0 4px !important;
+    right: 14px !important;
+    margin-top: -2px !important;
+}
+
+.ts-wrapper.single.dropdown-active .ts-control:after {
+    border-color: transparent transparent #94a3b8 transparent !important;
+    border-width: 0 4px 5px 4px !important;
+    margin-top: -3px !important;
+}
