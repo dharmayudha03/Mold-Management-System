@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title>{{ config('app.name', 'Mold Management System') }} — {{ $header ?? 'Dashboard' }}</title>
+    <title><?php echo e(config('app.name', 'Mold Management System')); ?> — <?php echo e($header ?? 'Dashboard'); ?></title>
 
     <!-- FontAwesome Free Local Asset & SVG Engine -->
-    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" />
-    <script src="{{ asset('vendor/fontawesome-free/js/all.min.js') }}"></script>
+    <link rel="stylesheet" href="<?php echo e(asset('vendor/fontawesome-free/css/all.min.css')); ?>" />
+    <script src="<?php echo e(asset('vendor/fontawesome-free/js/all.min.js')); ?>"></script>
 
     <!-- Custom styles for SB Admin 2 (Local downloaded asset) -->
-    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="<?php echo e(asset('css/sb-admin-2.min.css')); ?>" rel="stylesheet">
 
     <!-- TomSelect Searchable Dropdown CSS (Local Asset) -->
-    <link href="{{ asset('vendor/tom-select/tom-select.css') }}" rel="stylesheet">
+    <link href="<?php echo e(asset('vendor/tom-select/tom-select.css')); ?>" rel="stylesheet">
 
     <!-- Local Compiled CSS & JS (Vite Bundle) -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
     <style>
         /* ------------------------------------------------------------- */
@@ -643,7 +643,7 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        @include('layouts.navigation')
+        <?php echo $__env->make('layouts.navigation', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -662,11 +662,11 @@
 
                     <!-- Page Title Header in Topbar -->
                     <div class="d-flex align-items-center gap-2">
-                        @isset($header)
-                            <h1 class="h4 mb-0 text-gray-800 font-weight-extrabold tracking-tight">{{ $header }}</h1>
-                        @else
+                        <?php if(isset($header)): ?>
+                            <h1 class="h4 mb-0 text-gray-800 font-weight-extrabold tracking-tight"><?php echo e($header); ?></h1>
+                        <?php else: ?>
                             <h1 class="h4 mb-0 text-gray-800 font-weight-extrabold tracking-tight">Dashboard Overview</h1>
-                        @endisset
+                        <?php endif; ?>
                     </div>
 
                     <!-- Topbar Navbar Right -->
@@ -681,7 +681,26 @@
 
                         <!-- Live Auto-Refresh Badge (Top Header) -->
                         <li class="nav-item d-none d-md-block mr-3">
-                            <x-live-auto-refresh containerId="data-table-card" :interval="5000" />
+                            <?php if (isset($component)) { $__componentOriginalcb7c6e3a5f72c5b2f303eca367843bc3 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalcb7c6e3a5f72c5b2f303eca367843bc3 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.live-auto-refresh','data' => ['containerId' => 'data-table-card','interval' => 5000]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('live-auto-refresh'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['containerId' => 'data-table-card','interval' => 5000]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalcb7c6e3a5f72c5b2f303eca367843bc3)): ?>
+<?php $attributes = $__attributesOriginalcb7c6e3a5f72c5b2f303eca367843bc3; ?>
+<?php unset($__attributesOriginalcb7c6e3a5f72c5b2f303eca367843bc3); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalcb7c6e3a5f72c5b2f303eca367843bc3)): ?>
+<?php $component = $__componentOriginalcb7c6e3a5f72c5b2f303eca367843bc3; ?>
+<?php unset($__componentOriginalcb7c6e3a5f72c5b2f303eca367843bc3); ?>
+<?php endif; ?>
                         </li>
 
                         <!-- Notifications Bell -->
@@ -698,25 +717,29 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2.5" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <div class="img-profile rounded-circle bg-primary text-white d-flex align-items-center justify-content-center font-weight-extrabold shadow-sm" style="width: 38px; height: 38px; font-size: 15px;">
-                                    {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                                    <?php echo e(strtoupper(substr(Auth::user()->name ?? 'U', 0, 1))); ?>
+
                                 </div>
                                 <div class="d-none d-lg-block text-left">
                                     <div class="text-xs font-weight-extrabold text-gray-800 leading-tight">
-                                        {{ Auth::user()->name ?? 'User Administrator' }}
+                                        <?php echo e(Auth::user()->name ?? 'User Administrator'); ?>
+
                                     </div>
                                     <div class="text-[10px] text-success font-weight-bold leading-tight mt-0.5">
-                                        <i class="fas fa-circle text-[7px] mr-1"></i> {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}
+                                        <i class="fas fa-circle text-[7px] mr-1"></i> <?php echo e(Auth::user()->roles->pluck('name')->first() ?? 'User'); ?>
+
                                     </div>
                                 </div>
                             </a>
                             <!-- User Dropdown Menu -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in border-0 mt-2 p-2" aria-labelledby="userDropdown" style="border-radius: 0.75rem;">
                                 <div class="dropdown-header text-gray-500 font-weight-bold">
-                                    {{ Auth::user()->email ?? '' }}
+                                    <?php echo e(Auth::user()->email ?? ''); ?>
+
                                 </div>
                                 <div class="dropdown-divider"></div>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
+                                <form method="POST" action="<?php echo e(route('logout')); ?>">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="dropdown-item text-danger font-weight-bold rounded-lg">
                                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2"></i> Logout
                                     </button>
@@ -733,35 +756,38 @@
                 <div class="container-fluid px-4 py-3">
 
                     <!-- Flash Success Notification -->
-                    @if (session('success'))
+                    <?php if(session('success')): ?>
                         <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4 border-0 rounded-xl" role="alert">
-                            <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
+                            <i class="fas fa-check-circle mr-2"></i> <?php echo e(session('success')); ?>
+
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
                     <!-- Flash Error Notification -->
-                    @if (session('error'))
+                    <?php if(session('error')): ?>
                         <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4 border-0 rounded-xl" role="alert">
-                            <i class="fas fa-exclamation-triangle mr-2"></i> {{ session('error') }}
+                            <i class="fas fa-exclamation-triangle mr-2"></i> <?php echo e(session('error')); ?>
+
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
                     <!-- Validation Errors -->
-                    @if ($errors->any())
+                    <?php if($errors->any()): ?>
                         <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4 border-0 rounded-xl">
                             <strong>Harap perbaiki kesalahan berikut:</strong>
                             <ul class="mb-0 mt-1 pl-3">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
                     <!-- Main View Content -->
-                    {{ $slot }}
+                    <?php echo e($slot); ?>
+
 
                 </div>
                 <!-- /.container-fluid -->
@@ -773,7 +799,7 @@
             <footer class="sticky-footer bg-white border-top text-gray-500 py-3 mt-auto shadow-sm">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto font-weight-bold text-xs text-gray-500">
-                        <span>PT. IRC INOAC INDONESIA &copy; Mold Management System {{ date('Y') }}</span>
+                        <span>PT. IRC INOAC INDONESIA &copy; Mold Management System <?php echo e(date('Y')); ?></span>
                     </div>
                 </div>
             </footer>
@@ -794,13 +820,13 @@
     <div id="sidebar-overlay"></div>
 
     <!-- Local Downloaded SB Admin 2 Scripts -->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <script src="<?php echo e(asset('vendor/jquery/jquery.min.js')); ?>"></script>
+    <script src="<?php echo e(asset('vendor/bootstrap/js/bootstrap.bundle.min.js')); ?>"></script>
+    <script src="<?php echo e(asset('vendor/jquery-easing/jquery.easing.min.js')); ?>"></script>
+    <script src="<?php echo e(asset('js/sb-admin-2.min.js')); ?>"></script>
     
     <!-- TomSelect Searchable Dropdown JS (Local Asset) -->
-    <script src="{{ asset('vendor/tom-select/tom-select.complete.min.js') }}"></script>
+    <script src="<?php echo e(asset('vendor/tom-select/tom-select.complete.min.js')); ?>"></script>
 
     <script>
         // Sidebar Toggle Logic
@@ -951,3 +977,4 @@
 </body>
 </html>
 
+<?php /**PATH C:\xampp\htdocs\project\resources\views/layouts/app.blade.php ENDPATH**/ ?>

@@ -4,9 +4,13 @@ Dokumen ini berisi panduan langkah-demi-langkah saat Anda memindahkan project **
 
 ---
 
-## 🚀 LANGKAH 1: Salin Project ke Komputer Pabrik
-1. Copy seluruh folder project ini (`project`) ke komputer pabrik (misal ke `C:\xampp\htdocs\project`).
-2. Buka terminal di folder project tersebut (`c:\xampp\htdocs\project`).
+## 🚀 LANGKAH 1: Salin / Download Project ke Komputer Pabrik
+Anda bisa menggunakan **Opsi Download ZIP** (jika komputer pabrik tidak ada Git CLI):
+
+1. **Download ZIP**: Buka browser di komputer pabrik -> Buka halaman GitHub repo -> Klik tombol hijau **`Code`** -> Pilih **`Download ZIP`**.
+2. **Ekstrak**: Ekstrak file ZIP tersebut ke folder `C:\xampp\htdocs\`.
+3. **Rename Folder**: Ubah nama folder hasil ekstrak (misal `project-main`) menjadi **`project`** sehingga jalurnya menjadi `C:\xampp\htdocs\project`.
+4. Buka terminal (CMD / PowerShell / Git Bash) di folder `C:\xampp\htdocs\project`.
 
 ---
 

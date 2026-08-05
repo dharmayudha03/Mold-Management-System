@@ -24,7 +24,7 @@ class FormSandblastingController extends Controller
     {
         $search = $request->input('search');
 
-        $query = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser']);
+        $query = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -38,7 +38,7 @@ class FormSandblastingController extends Controller
             });
         }
 
-        $formSandblastings = $query->latest()->paginate(25)->withQueryString();
+        $formSandblastings = $query->latest()->paginate(15)->withQueryString();
 
         return view('form-sandblastings.index', compact('formSandblastings', 'search'));
     }

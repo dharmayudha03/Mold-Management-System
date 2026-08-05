@@ -33,7 +33,7 @@
     </div>
 
     <!-- Data Table Card -->
-    <div class="card shadow-sm border-0 mb-4" style="border-radius: 1rem;">
+    <div class="card shadow-sm border-0 mb-4" id="data-table-card" style="border-radius: 1rem;">
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
             <h6 class="m-0 font-weight-extrabold text-gray-900"><i class="fas fa-arrow-circle-up text-gray-700 mr-2"></i>Daftar Cetakan Naik Mesin</h6>
             <span class="badge bg-light text-gray-700 border px-3 py-1.5 font-weight-bold" style="border-radius: 50rem;">Total: {{ $cetakanNaiks->total() }} Records</span>

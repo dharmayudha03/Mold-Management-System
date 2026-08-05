@@ -22,7 +22,7 @@ class FormSetupCetakanController extends Controller
     {
         $search = $request->input('search');
 
-        $query = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser']);
+        $query = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -39,7 +39,7 @@ class FormSetupCetakanController extends Controller
             });
         }
 
-        $formSetupCetakans = $query->latest()->paginate(25)->withQueryString();
+        $formSetupCetakans = $query->latest()->paginate(15)->withQueryString();
 
         return view('form-setup-cetakans.index', compact('formSetupCetakans', 'search'));
     }
