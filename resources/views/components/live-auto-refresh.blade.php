@@ -1,4 +1,4 @@
-@props(['interval' => 5000, 'containerId' => 'data-table-card'])
+@props(['interval' => 10000, 'containerId' => 'data-table-card'])
 
 <button type="button" 
         id="livePillBtn" 
@@ -6,7 +6,7 @@
         style="border-radius: 50rem; font-size: 0.73rem; letter-spacing: 0.04em; cursor: pointer; outline: none !important; user-select: none; background-color: #ecfdf5; color: #047857; border-color: #a7f3d0 !important; transition: all 0.2s ease-in-out;" 
         title="Klik untuk Pause / Resume Auto Refresh">
     <span class="live-dot" id="live-dot"></span>
-    <span id="live-text">LIVE (5s)</span>
+    <span id="live-text">LIVE (10s)</span>
 </button>
 
 <style>
@@ -38,11 +38,17 @@
         const liveText = document.getElementById('live-text');
         const containerId = "{{ $containerId }}";
         const intervalMs = {{ $interval }};
-        let isLiveActive = true;
+        let isFetching = false;
         let pollingTimer = null;
+
+        // Remember user setting via localStorage
+        const storedState = localStorage.getItem('live_refresh_enabled');
+        let isLiveActive = storedState !== null ? (storedState === 'true') : true;
 
         function setLiveState(active, statusText = null) {
             isLiveActive = active;
+            localStorage.setItem('live_refresh_enabled', active ? 'true' : 'false');
+
             if (active) {
                 if (liveBtn) {
                     liveBtn.style.backgroundColor = '#ecfdf5';
@@ -50,7 +56,7 @@
                     liveBtn.style.borderColor = '#a7f3d0';
                 }
                 if (liveDot) liveDot.classList.remove('paused');
-                if (liveText) liveText.textContent = statusText || 'LIVE (5s)';
+                if (liveText) liveText.textContent = statusText || 'LIVE (10s)';
             } else {
                 if (liveBtn) {
                     liveBtn.style.backgroundColor = '#f1f5f9';
@@ -62,9 +68,19 @@
             }
         }
 
+        // Apply initial state
+        setLiveState(isLiveActive, isLiveActive ? 'LIVE (10s)' : 'PAUSED');
+
         function checkCanPoll() {
             if (!isLiveActive) return false;
             if (document.hidden) return false;
+            if (isFetching) return false;
+            
+            // Check target card
+            const targetCard = document.getElementById(containerId) || document.querySelector('.card-table-target');
+            if (!targetCard) return false;
+
+            // Pause if user is typing
             const activeEl = document.activeElement;
             if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT' || activeEl.tagName === 'TEXTAREA')) {
                 return false;
@@ -78,6 +94,8 @@
             const targetCard = document.getElementById(containerId) || document.querySelector('.card-table-target');
             if (!targetCard) return;
 
+            isFetching = true;
+
             fetch(window.location.href, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -85,6 +103,7 @@
             })
             .then(res => res.text())
             .then(htmlString => {
+                isFetching = false;
                 if (!checkCanPoll()) return;
 
                 const parser = new DOMParser();
@@ -98,7 +117,10 @@
                     setLiveState(true, `LIVE (${timeStr})`);
                 }
             })
-            .catch(err => console.log('Live refresh skipped:', err));
+            .catch(err => {
+                isFetching = false;
+                console.log('Live refresh skipped:', err);
+            });
         }
 
         // Toggle state on button click
@@ -107,7 +129,7 @@
                 if (isLiveActive) {
                     setLiveState(false, 'PAUSED');
                 } else {
-                    setLiveState(true, 'LIVE (5s)');
+                    setLiveState(true, 'LIVE (10s)');
                     fetchLatestData();
                 }
             });
@@ -121,7 +143,7 @@
             if (document.hidden) {
                 setLiveState(isLiveActive, isLiveActive ? 'TAB INACTIVE' : 'PAUSED');
             } else if (isLiveActive) {
-                setLiveState(true, 'LIVE (5s)');
+                setLiveState(true, 'LIVE (10s)');
                 fetchLatestData();
             }
         });

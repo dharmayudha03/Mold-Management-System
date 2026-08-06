@@ -22,7 +22,7 @@ class FormSetupCetakanController extends Controller
     {
         $search = $request->input('search');
 
-        $query = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori']);
+        $query = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -39,7 +39,7 @@ class FormSetupCetakanController extends Controller
             });
         }
 
-        $formSetupCetakans = $query->latest()->paginate(15)->withQueryString();
+        $formSetupCetakans = $query->latest()->paginate(25)->withQueryString();
 
         return view('form-setup-cetakans.index', compact('formSetupCetakans', 'search'));
     }
@@ -55,7 +55,7 @@ class FormSetupCetakanController extends Controller
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
 
             fputcsv($handle, [
-                'NO DOC', 'TANGGAL', 'KATEGORI', 'CODE ITEM', 'MOLD SET', 'MOLD CAVITY', 'MESIN', 'SHIFT', 'PIC KARYAWAN'
+                'NO DOC', 'TANGGAL', 'KATEGORI', 'CODE ITEM', 'MOLD SET', 'MOLD CAVITY', 'MESIN', 'SHIFT', 'GUIDE PEN', 'BUSING', 'BAUT', 'CORE', 'PISTON', 'POT', 'PL', 'CAV NG', 'PIC KARYAWAN'
             ]);
 
             foreach ($items as $item) {
@@ -69,6 +69,14 @@ class FormSetupCetakanController extends Controller
                     $item->cavCodeItem->moldcav ?? '-',
                     $item->listMesin->code ?? '-',
                     $item->shift,
+                    $item->guidepen ?? '-',
+                    $item->busing ?? '-',
+                    $item->baut ?? '-',
+                    $item->core ?? '-',
+                    $item->piston ?? '-',
+                    $item->pot ?? '-',
+                    $item->pl ?? '-',
+                    $item->cav_ng ?? 0,
                     $pics ?: '-'
                 ]);
             }

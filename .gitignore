@@ -33,3 +33,6 @@ use_case_diagram.png
 test_swimlane.png
 test_uml_uc.png
 uts_extracted.txt
+/storage/framework/views/*
+/storage/framework/cache/*
+/storage/framework/sessions/*

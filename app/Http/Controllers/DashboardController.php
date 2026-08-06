@@ -38,13 +38,14 @@ class DashboardController extends Controller
 
         $totalUser = User::count();
 
-        $recentHistory = HistoryCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem'])->latest()->get();
-        $recentSetup = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->get();
-        $recentSandblasting = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->get();
+        $recentHistory = HistoryCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem'])->latest()->take(10)->get();
+        $recentSetup = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get();
+        $recentSandblasting = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get();
         
         $recentCetakanNaik = $cetakanNaikQuery
             ->with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])
             ->latest()
+            ->take(10)
             ->get();
 
         return view('dashboard', compact(
@@ -84,7 +85,7 @@ class DashboardController extends Controller
         $totalCetakanNaik = (clone $cetakanNaikQuery)->count();
         $totalUser = User::count();
 
-        $recentHistory = HistoryCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem'])->latest()->get()->map(function($item) {
+        $recentHistory = HistoryCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem'])->latest()->take(10)->get()->map(function($item) {
             return [
                 'code_item' => $item->listCodeItem->name ?? '-',
                 'mold_set' => $item->setCodeItem->moldset ?? '-',
@@ -92,7 +93,7 @@ class DashboardController extends Controller
             ];
         });
 
-        $recentSetup = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->get()->map(function($item) {
+        $recentSetup = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get()->map(function($item) {
             return [
                 'code_item' => $item->listCodeItem->name ?? '-',
                 'mold_set' => $item->setCodeItem->moldset ?? '-',
@@ -100,7 +101,7 @@ class DashboardController extends Controller
             ];
         });
 
-        $recentSandblasting = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->get()->map(function($item) {
+        $recentSandblasting = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get()->map(function($item) {
             return [
                 'code_item' => $item->listCodeItem->name ?? '-',
                 'mold_set' => $item->setCodeItem->moldset ?? '-',
@@ -111,6 +112,7 @@ class DashboardController extends Controller
         $recentCetakanNaik = $cetakanNaikQuery
             ->with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])
             ->latest()
+            ->take(10)
             ->get()->map(function($item) {
                 return [
                     'mesin' => $item->listMesin->code ?? '-',

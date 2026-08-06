@@ -94,24 +94,79 @@
                                 <td class="font-weight-bold text-gray-800">{{ $item->cavCodeItem->moldcav ?? '-' }}</td>
                                 <td class="font-weight-extrabold text-gray-900">{{ $item->listMesin->code ?? '-' }}</td>
 
-                                @foreach(['guidepen' => $item->guidepen, 'busing' => $item->busing, 'baut' => $item->baut, 'core' => $item->core, 'piston' => $item->piston, 'pot' => $item->pot, 'pl' => $item->pl] as $key => $val)
+                                {{-- Guide Pen --}}
                                 <td class="text-center">
-                                    @if($val === '√')
+                                    @if($item->guidepen === '√')
                                         <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.75rem;">√</span>
                                     @else
                                         <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; font-size: 0.75rem;">–</span>
                                     @endif
                                 </td>
-                                @endforeach
+
+                                {{-- Busing --}}
+                                <td class="text-center">
+                                    @if($item->busing === '√')
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.75rem;">√</span>
+                                    @else
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; font-size: 0.75rem;">–</span>
+                                    @endif
+                                </td>
+
+                                {{-- Baut --}}
+                                <td class="text-center">
+                                    @if($item->baut === '√')
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.75rem;">√</span>
+                                    @else
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; font-size: 0.75rem;">–</span>
+                                    @endif
+                                </td>
+
+                                {{-- Core --}}
+                                <td class="text-center">
+                                    @if($item->core === '√')
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.75rem;">√</span>
+                                    @else
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; font-size: 0.75rem;">–</span>
+                                    @endif
+                                </td>
+
+                                {{-- Piston --}}
+                                <td class="text-center">
+                                    @if($item->piston === '√')
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.75rem;">√</span>
+                                    @else
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; font-size: 0.75rem;">–</span>
+                                    @endif
+                                </td>
+
+                                {{-- Pot --}}
+                                <td class="text-center">
+                                    @if($item->pot === '√')
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.75rem;">√</span>
+                                    @else
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; font-size: 0.75rem;">–</span>
+                                    @endif
+                                </td>
+
+                                {{-- PL --}}
+                                <td class="text-center">
+                                    @if($item->pl === '√')
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.75rem;">√</span>
+                                    @else
+                                        <span class="badge font-weight-extrabold px-2 py-1" style="background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; font-size: 0.75rem;">–</span>
+                                    @endif
+                                </td>
 
                                 {{-- Cavity NG --}}
-                                <td class="text-center">
+                                <td class="text-center" style="min-width: 75px;">
                                     @if($item->cav_ng > 0)
                                         <span class="badge font-weight-extrabold px-2.5 py-1" style="background-color: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; border-radius: 0.5rem; font-size: 0.75rem;">
                                             <i class="fas fa-exclamation-triangle mr-1" style="font-size: 0.6rem;"></i>{{ $item->cav_ng }}
                                         </span>
                                     @else
-                                        <span class="badge font-weight-extrabold px-2.5 py-1" style="background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; border-radius: 0.5rem; font-size: 0.75rem;">0</span>
+                                        <span class="badge font-weight-extrabold px-2.5 py-1" style="background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; border-radius: 0.5rem; font-size: 0.75rem;">
+                                            0
+                                        </span>
                                     @endif
                                 </td>
 

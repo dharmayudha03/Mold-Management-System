@@ -4,19 +4,19 @@
     <meta charset="utf-8">
     <title>Laporan Form Sandblasting - PT IRC INOAC INDONESIA</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 11px; color: #1e293b; margin: 0; padding: 20px; }
-        .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
-        .header h1 { margin: 0; font-size: 18px; color: #0f172a; text-transform: uppercase; }
-        .header h2 { margin: 4px 0 0 0; font-size: 13px; color: #d97706; text-transform: uppercase; }
-        .header p { margin: 4px 0 0 0; font-size: 10px; color: #64748b; }
+        body { font-family: Arial, sans-serif; font-size: 10px; color: #1e293b; margin: 0; padding: 15px; }
+        .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 15px; }
+        .header h1 { margin: 0; font-size: 16px; color: #0f172a; text-transform: uppercase; }
+        .header h2 { margin: 3px 0 0 0; font-size: 12px; color: #d97706; text-transform: uppercase; }
+        .header p { margin: 3px 0 0 0; font-size: 9px; color: #64748b; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #cbd5e1; padding: 7px 9px; text-align: left; }
-        th { background-color: #f1f5f9; font-weight: bold; text-transform: uppercase; font-size: 10px; color: #334155; }
+        th, td { border: 1px solid #cbd5e1; padding: 6px 6px; text-align: left; font-size: 9.5px; }
+        th { background-color: #f1f5f9; font-weight: bold; text-transform: uppercase; font-size: 9px; color: #334155; }
         tr:nth-child(even) { background-color: #f8fafc; }
         .text-center { text-align: center; }
-        .footer { margin-top: 30px; font-size: 10px; color: #64748b; text-align: right; }
+        .footer { margin-top: 25px; font-size: 9px; color: #64748b; text-align: right; }
         @media print {
-            @page { size: A4 landscape; margin: 15mm; }
+            @page { size: A4 landscape; margin: 10mm; }
             .no-print { display: none; }
         }
     </style>
@@ -30,7 +30,7 @@
 
     <div class="header">
         <h1>PT. IRC INOAC INDONESIA</h1>
-        <h2>LAPORAN FORM SANDBLASTING</h2>
+        <h2>LAPORAN FORM SANDBLASTING CETAKAN</h2>
         <p>Dicetak Pada: {{ date('d F Y H:i:s') }}</p>
     </div>
 
@@ -45,6 +45,12 @@
                 <th>MOLD CAVITY</th>
                 <th>MESIN</th>
                 <th>SHIFT</th>
+                <th class="text-center">SANDBLASTING</th>
+                <th class="text-center">CUCI</th>
+                <th class="text-center">AUTOSOL</th>
+                <th class="text-center">GERINDA</th>
+                <th class="text-center">OILING</th>
+                <th class="text-center">CAV NG</th>
                 <th>PIC KARYAWAN</th>
             </tr>
         </thead>
@@ -52,13 +58,19 @@
             @foreach($items as $item)
                 <tr>
                     <td><strong>{{ $item->nodoc }}</strong></td>
-                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
                     <td>{{ $item->kategori->name ?? '-' }}</td>
                     <td><strong>{{ $item->listCodeItem->name ?? '-' }}</strong></td>
                     <td>{{ $item->setCodeItem->moldset ?? '-' }}</td>
                     <td>{{ $item->cavCodeItem->moldcav ?? '-' }}</td>
                     <td>{{ $item->listMesin->code ?? '-' }}</td>
                     <td class="text-center">{{ $item->shift }}</td>
+                    <td class="text-center">{{ $item->sandblasting ?? '-' }}</td>
+                    <td class="text-center">{{ $item->cuci ?? '-' }}</td>
+                    <td class="text-center">{{ $item->autosol ?? '-' }}</td>
+                    <td class="text-center">{{ $item->gerinda ?? '-' }}</td>
+                    <td class="text-center">{{ $item->oiling ?? '-' }}</td>
+                    <td class="text-center">{{ $item->cav_ng ?? 0 }}</td>
                     <td>{{ $item->detailUser->pluck('name')->implode(', ') ?: '-' }}</td>
                 </tr>
             @endforeach

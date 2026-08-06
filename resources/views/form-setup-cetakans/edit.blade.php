@@ -304,8 +304,10 @@
             }
             updateMesinFilter();
 
-            // 1. Filter Karyawan by Group Role
-            let loadRoleUsersSeq = 0;
+            // 1. Filter Karyawan by Group Role (Instant 0ms In-Memory Filter)
+            const allDetailUsers = @json($detailUsers ?? []);
+            const selectedUserIds = @json($selectedUserIds ?? []);
+
             function loadRoleUsers(roleIdVal) {
                 if (!roleSelect || !detailUserContainer) return;
                 const roleId = (roleIdVal !== undefined && roleIdVal !== null) ? roleIdVal : roleSelect.value;
@@ -314,35 +316,39 @@
                     return;
                 }
 
-                detailUserContainer.innerHTML = '<p class="text-xs text-gray-500 italic mb-0"><i class="fas fa-spinner fa-spin mr-1"></i> Memuat nama karyawan...</p>';
+                const filtered = allDetailUsers.filter(u => u.role_id == roleId);
 
-                const currentSeq = ++loadRoleUsersSeq;
-                fetch(`{{ route('api.role.detail-users') }}?role_id=${roleId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (currentSeq !== loadRoleUsersSeq) return;
-                        detailUserContainer.innerHTML = '';
-                        if (!data || data.length === 0) {
-                            detailUserContainer.innerHTML = '<p class="text-xs text-gray-500 italic mb-0">Tidak ada karyawan untuk group ini.</p>';
-                        } else {
-                            const flexContainer = document.createElement('div');
-                            flexContainer.className = 'd-flex flex-wrap gap-2';
-                            data.forEach(user => {
-                                const div = document.createElement('div');
-                                div.className = 'form-check form-check-inline bg-white px-2.5 py-1.5 rounded-lg border';
-                                div.innerHTML = `
-                                    <input type="checkbox" name="detail_user_id[]" value="${user.id}" id="user_${user.id}" class="form-check-input">
-                                    <label for="user_${user.id}" class="form-check-label text-xs font-weight-bold text-gray-800">${user.name}</label>
-                                `;
-                                flexContainer.appendChild(div);
-                            });
-                            detailUserContainer.appendChild(flexContainer);
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        detailUserContainer.innerHTML = '<p class="text-xs text-danger mb-0">Gagal memuat nama karyawan.</p>';
-                    });
+                function renderUserCheckboxes(users) {
+                    detailUserContainer.innerHTML = '';
+                    if (!users || users.length === 0) {
+                        detailUserContainer.innerHTML = '<p class="text-xs text-gray-500 italic mb-0">Tidak ada karyawan untuk group ini.</p>';
+                    } else {
+                        const flexContainer = document.createElement('div');
+                        flexContainer.className = 'd-flex flex-wrap gap-2';
+                        users.forEach(user => {
+                            const isChecked = selectedUserIds.map(String).includes(String(user.id)) ? 'checked' : '';
+                            const div = document.createElement('div');
+                            div.className = 'form-check form-check-inline bg-white px-2.5 py-1.5 rounded-lg border shadow-2xs';
+                            div.innerHTML = `
+                                <input type="checkbox" name="detail_user_id[]" value="${user.id}" id="user_${user.id}" class="form-check-input" ${isChecked} style="cursor: pointer;">
+                                <label for="user_${user.id}" class="form-check-label text-xs font-weight-bold text-gray-800" style="cursor: pointer;">${user.name}</label>
+                            `;
+                            flexContainer.appendChild(div);
+                        });
+                        detailUserContainer.appendChild(flexContainer);
+                    }
+                }
+
+                if (filtered && filtered.length > 0) {
+                    renderUserCheckboxes(filtered);
+                } else {
+                    fetch(`{{ route('api.role.detail-users') }}?role_id=${roleId}`)
+                        .then(res => res.json())
+                        .then(data => renderUserCheckboxes(data))
+                        .catch(err => {
+                            detailUserContainer.innerHTML = '<p class="text-xs text-danger mb-0">Gagal memuat nama karyawan.</p>';
+                        });
+                }
             }
 
             if (roleSelect && detailUserContainer) {

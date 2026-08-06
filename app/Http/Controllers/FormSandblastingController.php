@@ -24,7 +24,7 @@ class FormSandblastingController extends Controller
     {
         $search = $request->input('search');
 
-        $query = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori']);
+        $query = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -38,7 +38,7 @@ class FormSandblastingController extends Controller
             });
         }
 
-        $formSandblastings = $query->latest()->paginate(15)->withQueryString();
+        $formSandblastings = $query->latest()->paginate(25)->withQueryString();
 
         return view('form-sandblastings.index', compact('formSandblastings', 'search'));
     }
@@ -54,7 +54,7 @@ class FormSandblastingController extends Controller
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
 
             fputcsv($handle, [
-                'NO DOC', 'TANGGAL', 'KATEGORI', 'CODE ITEM', 'MOLD SET', 'MOLD CAVITY', 'MESIN', 'SHIFT', 'PIC KARYAWAN'
+                'NO DOC', 'TANGGAL', 'KATEGORI', 'CODE ITEM', 'MOLD SET', 'MOLD CAVITY', 'MESIN', 'SHIFT', 'SANDBLASTING', 'CUCI', 'AUTOSOL', 'GERINDA/KIKIR', 'OILING', 'CAV NG', 'PIC KARYAWAN'
             ]);
 
             foreach ($items as $item) {
@@ -68,6 +68,12 @@ class FormSandblastingController extends Controller
                     $item->cavCodeItem->moldcav ?? '-',
                     $item->listMesin->code ?? '-',
                     $item->shift,
+                    $item->sandblasting ?? '-',
+                    $item->cuci ?? '-',
+                    $item->autosol ?? '-',
+                    $item->gerinda ?? '-',
+                    $item->oiling ?? '-',
+                    $item->cav_ng ?? 0,
                     $pics ?: '-'
                 ]);
             }

@@ -500,6 +500,11 @@
             box-shadow: none !important;
         }
 
+        #sidebarToggle::after {
+            display: none !important;
+            content: none !important;
+        }
+
         .ts-wrapper .ts-control input {
             color: #0f172a !important;
             font-weight: 600 !important;
@@ -681,15 +686,128 @@
 
                         <!-- Live Auto-Refresh Badge (Top Header) -->
                         <li class="nav-item d-none d-md-block mr-3">
-                            <x-live-auto-refresh containerId="data-table-card" :interval="5000" />
+                            <x-live-auto-refresh containerId="data-table-card" :interval="10000" />
                         </li>
 
-                        <!-- Notifications Bell -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-bell text-gray-500 text-lg"></i>
-                                <span class="badge badge-danger badge-counter">3+</span>
+                        <!-- Notifications Bell (Pusat Notifikasi Sistem Berbasis Role) -->
+                        @php
+                            $recentNotifs = collect();
+                            $authUser = auth()->user();
+
+                            try {
+                                if ($authUser) {
+                                    $isSuperAdmin = $authUser->hasRole('super_admin') || $authUser->email === 'admin@admin.com';
+                                    $isPPIC = $authUser->hasRole('PPIC') || $authUser->hasRole('Ppic') || $authUser->hasRole('ppic');
+                                    $isSetup = $authUser->hasRole('Setup & Maintenance') || $authUser->hasRole('Setup') || $authUser->hasRole('Maintenance');
+                                    $isPE = $authUser->hasRole('PE') || $authUser->hasRole('pe') || $authUser->hasRole('Pe');
+                                    $isMSD = $authUser->hasRole('Msd') || $authUser->hasRole('msd') || $authUser->hasRole('MSD');
+
+                                    // 1. MJO (Role: MSD, PE, Super Admin)
+                                    if ($isSuperAdmin || $isMSD || $isPE) {
+                                        $pendingMjos = \App\Models\FormMjo::with(['listCodeItem'])->where('status', '!=', 'Selesai')->latest()->take(3)->get();
+                                        foreach($pendingMjos as $mjo) {
+                                            $recentNotifs->push([
+                                                'title' => 'Form MJO Butuh Update',
+                                                'desc' => ($mjo->listCodeItem->name ?? 'Code Item') . ' - Status: ' . ($mjo->status ?? 'Proses'),
+                                                'time' => $mjo->updated_at ? $mjo->updated_at->diffForHumans() : '-',
+                                                'url' => route('form-mjos.index'),
+                                                'icon' => 'fas fa-tools text-amber-500',
+                                                'bg' => 'bg-amber-50'
+                                            ]);
+                                        }
+                                    }
+
+                                    // 2. PEJO Repair (Role: PE, Setup & Maintenance, Super Admin)
+                                    if ($isSuperAdmin || $isPE || $isSetup) {
+                                        $recentRepairs = \App\Models\FormRepairCetakan::with(['listCodeItem'])->latest()->take(2)->get();
+                                        foreach($recentRepairs as $rep) {
+                                            $recentNotifs->push([
+                                                'title' => 'Pengajuan PEJO (Repair)',
+                                                'desc' => ($rep->listCodeItem->name ?? 'Code Item') . ' - NoDoc: ' . $rep->nodoc,
+                                                'time' => $rep->created_at ? $rep->created_at->diffForHumans() : '-',
+                                                'url' => route('form-repair-cetakans.index'),
+                                                'icon' => 'fas fa-wrench text-rose-500',
+                                                'bg' => 'bg-rose-50'
+                                            ]);
+                                        }
+                                    }
+
+                                    // 3. Setup Cetakan (Role: Setup & Maintenance, PPIC, Super Admin)
+                                    if ($isSuperAdmin || $isSetup || $isPPIC) {
+                                        $recentSetups = \App\Models\FormSetupCetakan::with(['listCodeItem'])->latest()->take(2)->get();
+                                        foreach($recentSetups as $stp) {
+                                            $recentNotifs->push([
+                                                'title' => 'Setup Cetakan Baru',
+                                                'desc' => ($stp->listCodeItem->name ?? 'Code Item') . ' - Shift ' . $stp->shift,
+                                                'time' => $stp->created_at ? $stp->created_at->diffForHumans() : '-',
+                                                'url' => route('form-setup-cetakans.index'),
+                                                'icon' => 'fas fa-file-invoice text-indigo-500',
+                                                'bg' => 'bg-indigo-50'
+                                            ]);
+                                        }
+                                    }
+
+                                    // 4. Form Schedule (Role: PPIC, Super Admin)
+                                    if ($isSuperAdmin || $isPPIC) {
+                                        $recentSchedules = \App\Models\FormSchedule::with(['listCodeItem'])->latest()->take(2)->get();
+                                        foreach($recentSchedules as $sch) {
+                                            $recentNotifs->push([
+                                                'title' => 'Schedule Cetakan Baru',
+                                                'desc' => ($sch->listCodeItem->name ?? 'Code Item') . ' - NoDoc: ' . $sch->nodoc,
+                                                'time' => $sch->created_at ? $sch->created_at->diffForHumans() : '-',
+                                                'url' => route('form-schedules.index'),
+                                                'icon' => 'fas fa-calendar-check text-emerald-500',
+                                                'bg' => 'bg-emerald-50'
+                                            ]);
+                                        }
+                                    }
+                                }
+                            } catch (\Exception $e) {
+                                // Fallback if table query fails
+                            }
+
+                            $totalNotifCount = $recentNotifs->count();
+                        @endphp
+
+                        <li class="nav-item dropdown no-arrow mx-1 d-flex align-items-center">
+                            <a class="nav-link dropdown-toggle py-1 px-2.5" href="#" id="alertsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Pusat Notifikasi">
+                                <div class="position-relative d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                                    <i class="fas fa-bell text-gray-500 text-lg"></i>
+                                    @if($totalNotifCount > 0)
+                                        <span class="badge badge-danger position-absolute font-weight-extrabold" style="font-size: 0.6rem; border-radius: 50rem; padding: 0.2em 0.45em; background-color: #ef4444; top: -4px; right: -6px; border: 2px solid #ffffff; line-height: 1;">{{ $totalNotifCount }}</span>
+                                    @endif
+                                </div>
                             </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0" aria-labelledby="alertsDropdown" style="width: 320px; border-radius: 0.85rem; overflow: hidden; z-index: 1060;">
+                                <div class="bg-primary text-white font-weight-extrabold py-3 px-3 d-flex align-items-center justify-content-between">
+                                    <span class="text-xs font-weight-extrabold uppercase tracking-wider"><i class="fas fa-bell mr-1.5"></i> Notifikasi Sistem</span>
+                                    <span class="badge bg-white text-primary font-weight-extrabold px-2 py-0.5" style="border-radius: 50rem; font-size: 0.65rem;">{{ $totalNotifCount }} Aktif</span>
+                                </div>
+                                <div class="list-group list-group-flush" style="max-height: 280px; overflow-y: auto;">
+                                    @forelse($recentNotifs->take(5) as $notif)
+                                        <a class="dropdown-item d-flex align-items-center py-2.5 px-3 border-bottom text-wrap" href="{{ $notif['url'] }}" style="white-space: normal;">
+                                            <div class="mr-3 shrink-0">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center p-2 {{ $notif['bg'] }}" style="width: 36px; height: 36px;">
+                                                    <i class="{{ $notif['icon'] }}" style="font-size: 0.9rem;"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="text-gray-400 font-weight-bold" style="font-size: 0.68rem;">{{ $notif['time'] }}</div>
+                                                <span class="font-weight-bold text-gray-800 d-block" style="font-size: 0.78rem; line-height: 1.2;">{{ $notif['title'] }}</span>
+                                                <span class="text-gray-600 d-block" style="font-size: 0.72rem;">{{ $notif['desc'] }}</span>
+                                            </div>
+                                        </a>
+                                    @empty
+                                        <div class="text-center text-gray-500 py-3 font-weight-bold text-xs">
+                                            <i class="fas fa-check-circle text-success mr-1"></i> Tidak ada notifikasi baru untuk role Anda.
+                                        </div>
+                                    @endforelse
+                                </div>
+                                <a class="dropdown-item text-center font-weight-extrabold py-2 bg-light border-top text-primary" href="{{ route('dashboard') }}" style="font-size: 0.73rem;">
+                                    Lihat Dashboard Overview <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
                         </li>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
@@ -939,6 +1057,22 @@
             }
             setInterval(updateClock, 1000);
             updateClock();
+
+            // Sidebar Toggle Icon handler
+            const sidebarToggleBtn = document.getElementById('sidebarToggle');
+            const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+            if (sidebarToggleBtn && sidebarToggleIcon) {
+                sidebarToggleBtn.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const sidebar = document.getElementById('accordionSidebar');
+                        if (sidebar && sidebar.classList.contains('toggled')) {
+                            sidebarToggleIcon.className = 'fas fa-chevron-right';
+                        } else {
+                            sidebarToggleIcon.className = 'fas fa-chevron-left';
+                        }
+                    }, 50);
+                });
+            }
 
             // Init Bootstrap Tooltips globally
             if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {

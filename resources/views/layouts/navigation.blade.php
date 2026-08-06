@@ -385,7 +385,9 @@
 
     <!-- Sidebar Toggler -->
     <div class="text-center d-none d-md-inline mb-4">
-        <button class="rounded-circle border-0 bg-white-20 text-white hover:bg-white-30" id="sidebarToggle" style="width: 2.5rem; height: 2.5rem;"></button>
+        <button class="rounded-circle border-0 d-inline-flex align-items-center justify-content-center text-gray-300" id="sidebarToggle" style="width: 2.5rem; height: 2.5rem; background-color: rgba(255, 255, 255, 0.15); transition: all 0.2s ease-in-out;" title="Buka/Tutup Sidebar">
+            <i class="fas fa-chevron-left" id="sidebarToggleIcon" style="font-size: 0.85rem;"></i>
+        </button>
     </div>
 
 </ul>

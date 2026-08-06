@@ -75,17 +75,21 @@ class DetailUserController extends Controller
             return response()->json([]);
         }
 
-        $query = DetailUser::query();
+        $cacheKey = 'detail_users_role_' . (string)$roleParam;
+        $users = \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($roleParam) {
+            $query = DetailUser::query();
 
-        if (is_numeric($roleParam)) {
-            $query->where('role_id', (int)$roleParam);
-        } else {
-            $query->whereHas('role', function ($q) use ($roleParam) {
-                $q->where('name', $roleParam);
-            });
-        }
+            if (is_numeric($roleParam)) {
+                $query->where('role_id', (int)$roleParam);
+            } else {
+                $query->whereHas('role', function ($q) use ($roleParam) {
+                    $q->where('name', $roleParam);
+                });
+            }
 
-        $users = $query->get(['id', 'name'])->unique('name')->values();
+            return $query->get(['id', 'name', 'role_id'])->unique('name')->values();
+        });
+
         return response()->json($users);
     }
 }
