@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Login - Mold System Management | PT. IRC INOAC INDONESIA</title>
 
+    <!-- Favicon Logo IRC INOAC -->
+    <link rel="icon" type="image/png" href="{{ asset('images/coba.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/coba.png') }}">
+
     <!-- Local FontAwesome Free CSS & JS SVG Engine (100% Offline Icons) -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" />
     <script src="{{ asset('vendor/fontawesome-free/js/all.min.js') }}"></script>

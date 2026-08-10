@@ -7,6 +7,10 @@
 
     <title>{{ config('app.name', 'Mold Management System') }} — {{ $header ?? 'Dashboard' }}</title>
 
+    <!-- Favicon Logo IRC INOAC -->
+    <link rel="icon" type="image/png" href="{{ asset('images/coba.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/coba.png') }}">
+
     <!-- FontAwesome Free Local Asset & SVG Engine -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" />
     <script src="{{ asset('vendor/fontawesome-free/js/all.min.js') }}"></script>
