@@ -7,19 +7,29 @@
     $authUser = auth()->user();
     $isSuperAdmin = $authUser && ($authUser->hasRole('super_admin') || $authUser->email === 'admin@admin.com');
 
-    $isSetupMaint = $isSuperAdmin || ($authUser && ($authUser->hasRole('Setup & Maintenance') || $authUser->hasRole('Setup') || $authUser->hasRole('Maintenance')));
-    $isPE = $isSuperAdmin || ($authUser && ($authUser->hasRole('PE') || $authUser->hasRole('pe') || $authUser->hasRole('Pe')));
-    $isMSD = $isSuperAdmin || ($authUser && ($authUser->hasRole('Msd') || $authUser->hasRole('msd') || $authUser->hasRole('MSD')));
-    $isPPIC = $isSuperAdmin || ($authUser && ($authUser->hasRole('PPIC') || $authUser->hasRole('Ppic') || $authUser->hasRole('ppic') || $authUser->hasRole('Hatsumono')));
+    $isSetupMaint = $authUser && ($authUser->hasRole('Setup & Maintenance') || $authUser->hasRole('Setup') || $authUser->hasRole('Maintenance'));
+    $isPE = $authUser && ($authUser->hasRole('PE') || $authUser->hasRole('pe') || $authUser->hasRole('Pe'));
+    $isMSD = $authUser && ($authUser->hasRole('Msd') || $authUser->hasRole('msd') || $authUser->hasRole('MSD'));
+    $isPPIC = $authUser && ($authUser->hasRole('PPIC') || $authUser->hasRole('Ppic') || $authUser->hasRole('ppic') || $authUser->hasRole('Hatsumono'));
+    $isUserRole = $authUser && ($authUser->hasRole('User') || $authUser->hasRole('user') || $authUser->hasRole('Leader') || $authUser->hasRole('Supervisor') || $authUser->hasRole('leader') || $authUser->hasRole('supervisor'));
 
-    $canAccessCodeItem = $isSuperAdmin || $isPE;
-    $canAccessMesin = $isSuperAdmin || $isPE || $isSetupMaint;
-    $canAccessSetup = $isSuperAdmin || $isSetupMaint || $isPPIC;
-    $canAccessCetakanNaik = true;
-    $canAccessSandblasting = $isSuperAdmin || $isSetupMaint || $isPPIC;
-    $canAccessPejo = $isSuperAdmin || $isPE || $isSetupMaint;
+    // ATURAN PRESISI ROLE:
+    // 1. Setup & Maintenance: HANYA Form Setup, Sandblasting, PEJO Repair
+    // 2. PE: HANYA PEJO Repair, Form MJO
+    // 3. MSD: HANYA Form MJO
+    // 4. PPIC & Hatsumono: HANYA Schedule
+    // 5. User (Operator/Leader): HANYA Cetakan Naik
+    // 6. Super Admin: SEMUA KARTU
+
+    $canAccessCodeItem = $isSuperAdmin;
+    $canAccessMesin = $isSuperAdmin;
+
+    $canAccessSetup = $isSuperAdmin || $isSetupMaint;
+    $canAccessSandblasting = $isSuperAdmin || $isSetupMaint;
+    $canAccessPejo = $isSuperAdmin || $isSetupMaint || $isPE;
     $canAccessMjo = $isSuperAdmin || $isPE || $isMSD;
     $canAccessSchedule = $isSuperAdmin || $isPPIC;
+    $canAccessCetakanNaik = $isSuperAdmin || $isUserRole;
     $canAccessUsers = $isSuperAdmin;
 @endphp
 
@@ -109,18 +119,29 @@
 
         <!-- Card 4: Cetakan Naik -->
         <div class="col-xl col-md-6 mb-3">
+            @if($canAccessCetakanNaik)
             <a href="{{ route('cetakan-naiks.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
+            @else
+            <div class="card border-0 shadow-xs h-100 bg-white opacity-70" style="border-radius: 0.85rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            @endif
                 <div class="card-body p-3 d-flex align-items-center gap-3">
-                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #ea580c !important;">
-                        <i class="fas fa-fire fa-lg text-white"></i>
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: {{ $canAccessCetakanNaik ? '#ea580c' : '#94a3b8' }} !important;">
+                        <i class="fas {{ $canAccessCetakanNaik ? 'fa-fire' : 'fa-lock' }} fa-lg text-white"></i>
                     </div>
                     <div>
-                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">CETAKAN NAIK</div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider d-flex align-items-center" style="color: #64748b;">
+                            CETAKAN NAIK
+                            @if(!$canAccessCetakanNaik)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
+                        </div>
                         <div class="h4 mb-0 font-weight-black" id="totalCetakanNaik" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalCetakanNaik) }}</div>
-                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Sedang Produksi</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">{{ $canAccessCetakanNaik ? 'Sedang Produksi' : 'Akses Terkunci' }}</div>
                     </div>
                 </div>
+            @if($canAccessCetakanNaik)
             </a>
+            @else
+            </div>
+            @endif
         </div>
 
         <!-- Card 5: Sandblasting -->
