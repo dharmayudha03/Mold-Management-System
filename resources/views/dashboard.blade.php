@@ -13,27 +13,27 @@
     $isPPIC = $authUser && ($authUser->hasRole('PPIC') || $authUser->hasRole('Ppic') || $authUser->hasRole('ppic') || $authUser->hasRole('Hatsumono'));
     $isUserRole = $authUser && ($authUser->hasRole('User') || $authUser->hasRole('user') || $authUser->hasRole('Leader') || $authUser->hasRole('Supervisor') || $authUser->hasRole('leader') || $authUser->hasRole('supervisor'));
 
-    // ATURAN PRESISI ROLE:
-    // 1. Setup & Maintenance: HANYA Form Setup, Sandblasting, PEJO Repair
-    // 2. PE: HANYA PEJO Repair, Form MJO
-    // 3. MSD: HANYA Form MJO
-    // 4. PPIC & Hatsumono: HANYA Schedule
-    // 5. User (Operator/Leader): HANYA Cetakan Naik
+    // ATURAN TERBARU:
+    // 1. Setup & Maintenance: Form Setup, Sandblasting, Schedule (PEJO Read-only)
+    // 2. PE: PEJO Repair, Form MJO
+    // 3. MSD: Form MJO
+    // 4. PPIC & Hatsumono: Schedule, Form Setup, Sandblasting
+    // 5. User (Operator/Leader): Cetakan Naik
     // 6. Super Admin: SEMUA KARTU
 
     $canAccessCodeItem = $isSuperAdmin;
     $canAccessMesin = $isSuperAdmin;
 
-    $canAccessSetup = $isSuperAdmin || $isSetupMaint;
-    $canAccessSandblasting = $isSuperAdmin || $isSetupMaint;
-    $canAccessPejo = $isSuperAdmin || $isSetupMaint || $isPE;
+    $canAccessSetup = $isSuperAdmin || $isSetupMaint || $isPPIC;
+    $canAccessSandblasting = $isSuperAdmin || $isSetupMaint || $isPPIC;
+    $canAccessPejo = $isSuperAdmin || $isPE;
     $canAccessMjo = $isSuperAdmin || $isPE || $isMSD;
-    $canAccessSchedule = $isSuperAdmin || $isPPIC;
+    $canAccessSchedule = $isSuperAdmin || $isPPIC || $isSetupMaint;
     $canAccessCetakanNaik = $isSuperAdmin || $isUserRole;
     $canAccessUsers = $isSuperAdmin;
 @endphp
 
-    <!-- 5 Top Metric Cards (Role-Based Clickable Access) -->
+    <!-- 5 Top Metric Cards -->
     <div class="row mb-4">
 
         <!-- Card 1: Total Code Item -->
@@ -41,19 +41,16 @@
             @if($canAccessCodeItem)
             <a href="{{ route('code-items.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs h-100 bg-white opacity-70" style="border-radius: 0.85rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-3 d-flex align-items-center gap-3">
-                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: {{ $canAccessCodeItem ? '#2563eb' : '#94a3b8' }} !important;">
-                        <i class="fas {{ $canAccessCodeItem ? 'fa-cubes' : 'fa-lock' }} fa-lg text-white"></i>
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #2563eb !important;">
+                        <i class="fas fa-cubes fa-lg text-white"></i>
                     </div>
                     <div>
-                        <div class="text-[10px] font-weight-black uppercase tracking-wider d-flex align-items-center" style="color: #64748b;">
-                            TOTAL CODE ITEM
-                            @if(!$canAccessCodeItem)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">TOTAL CODE ITEM</div>
                         <div class="h4 mb-0 font-weight-black" id="totalCodeItem" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalCodeItem) }}</div>
-                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">{{ $canAccessCodeItem ? 'Data Mold Master' : 'Akses Terkunci' }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Data Mold Master</div>
                     </div>
                 </div>
             @if($canAccessCodeItem)
@@ -68,19 +65,16 @@
             @if($canAccessMesin)
             <a href="{{ route('list-mesins.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs h-100 bg-white opacity-70" style="border-radius: 0.85rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-3 d-flex align-items-center gap-3">
-                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: {{ $canAccessMesin ? '#16a34a' : '#94a3b8' }} !important;">
-                        <i class="fas {{ $canAccessMesin ? 'fa-check-circle' : 'fa-lock' }} fa-lg text-white"></i>
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #16a34a !important;">
+                        <i class="fas fa-check-circle fa-lg text-white"></i>
                     </div>
                     <div>
-                        <div class="text-[10px] font-weight-black uppercase tracking-wider d-flex align-items-center" style="color: #64748b;">
-                            MESIN AKTIF
-                            @if(!$canAccessMesin)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">MESIN AKTIF</div>
                         <div class="h4 mb-0 font-weight-black" id="totalMesin" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalMesin) }}</div>
-                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">{{ $canAccessMesin ? 'Status Aktif Produksi' : 'Akses Terkunci' }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Status Aktif Produksi</div>
                     </div>
                 </div>
             @if($canAccessMesin)
@@ -95,19 +89,16 @@
             @if($canAccessSetup)
             <a href="{{ route('form-setup-cetakans.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs h-100 bg-white opacity-70" style="border-radius: 0.85rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-3 d-flex align-items-center gap-3">
-                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: {{ $canAccessSetup ? '#0284c7' : '#94a3b8' }} !important;">
-                        <i class="fas {{ $canAccessSetup ? 'fa-file-invoice' : 'fa-lock' }} fa-lg text-white"></i>
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #0284c7 !important;">
+                        <i class="fas fa-file-invoice fa-lg text-white"></i>
                     </div>
                     <div>
-                        <div class="text-[10px] font-weight-black uppercase tracking-wider d-flex align-items-center" style="color: #64748b;">
-                            FORM SETUP
-                            @if(!$canAccessSetup)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">FORM SETUP</div>
                         <div class="h4 mb-0 font-weight-black" id="totalSetup" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalSetup) }}</div>
-                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">{{ $canAccessSetup ? 'Form Setup Terdaftar' : 'Akses Terkunci' }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Form Setup Terdaftar</div>
                     </div>
                 </div>
             @if($canAccessSetup)
@@ -122,19 +113,16 @@
             @if($canAccessCetakanNaik)
             <a href="{{ route('cetakan-naiks.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs h-100 bg-white opacity-70" style="border-radius: 0.85rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-3 d-flex align-items-center gap-3">
-                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: {{ $canAccessCetakanNaik ? '#ea580c' : '#94a3b8' }} !important;">
-                        <i class="fas {{ $canAccessCetakanNaik ? 'fa-fire' : 'fa-lock' }} fa-lg text-white"></i>
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #ea580c !important;">
+                        <i class="fas fa-fire fa-lg text-white"></i>
                     </div>
                     <div>
-                        <div class="text-[10px] font-weight-black uppercase tracking-wider d-flex align-items-center" style="color: #64748b;">
-                            CETAKAN NAIK
-                            @if(!$canAccessCetakanNaik)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">CETAKAN NAIK</div>
                         <div class="h4 mb-0 font-weight-black" id="totalCetakanNaik" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalCetakanNaik) }}</div>
-                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">{{ $canAccessCetakanNaik ? 'Sedang Produksi' : 'Akses Terkunci' }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Sedang Produksi</div>
                     </div>
                 </div>
             @if($canAccessCetakanNaik)
@@ -149,19 +137,16 @@
             @if($canAccessSandblasting)
             <a href="{{ route('form-sandblastings.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs h-100 bg-white opacity-70" style="border-radius: 0.85rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-3 d-flex align-items-center gap-3">
-                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: {{ $canAccessSandblasting ? '#f59e0b' : '#94a3b8' }} !important;">
-                        <i class="fas {{ $canAccessSandblasting ? 'fa-bolt' : 'fa-lock' }} fa-lg text-white"></i>
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #f59e0b !important;">
+                        <i class="fas fa-bolt fa-lg text-white"></i>
                     </div>
                     <div>
-                        <div class="text-[10px] font-weight-black uppercase tracking-wider d-flex align-items-center" style="color: #64748b;">
-                            SANDBLASTING
-                            @if(!$canAccessSandblasting)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">SANDBLASTING</div>
                         <div class="h4 mb-0 font-weight-black" id="totalSandblasting" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalSandblasting) }}</div>
-                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">{{ $canAccessSandblasting ? 'Proses Sandblasting' : 'Akses Terkunci' }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Proses Sandblasting</div>
                     </div>
                 </div>
             @if($canAccessSandblasting)
@@ -180,18 +165,15 @@
             @if($canAccessPejo)
             <a href="{{ route('form-repair-cetakans.index') }}" class="card border-0 shadow-xs text-decoration-none bg-white hover:bg-slate-50 transition-all cursor-pointer" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs bg-white opacity-70" style="border-radius: 0.75rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs bg-white" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-2.5 d-flex align-items-center justify-content-between">
                     <div>
-                        <div class="uppercase text-[10px] font-weight-black d-flex align-items-center" style="color: #64748b;">
-                            PEJO REPAIR
-                            @if(!$canAccessPejo)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="uppercase text-[10px] font-weight-black" style="color: #64748b;">PEJO REPAIR</div>
                         <div class="h5 mb-0 font-weight-black" id="totalRepair" style="color: #0f172a;">{{ number_format($totalRepair) }}</div>
                     </div>
-                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: {{ $canAccessPejo ? '#f43f5e' : '#94a3b8' }};">
-                        <i class="fas {{ $canAccessPejo ? 'fa-wrench' : 'fa-lock' }} text-xs"></i>
+                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: #f43f5e;">
+                        <i class="fas fa-wrench text-xs"></i>
                     </span>
                 </div>
             @if($canAccessPejo)
@@ -206,18 +188,15 @@
             @if($canAccessMjo)
             <a href="{{ route('form-mjos.index') }}" class="card border-0 shadow-xs text-decoration-none bg-white hover:bg-slate-50 transition-all cursor-pointer" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs bg-white opacity-70" style="border-radius: 0.75rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs bg-white" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-2.5 d-flex align-items-center justify-content-between">
                     <div>
-                        <div class="uppercase text-[10px] font-weight-black d-flex align-items-center" style="color: #64748b;">
-                            FORM MJO
-                            @if(!$canAccessMjo)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="uppercase text-[10px] font-weight-black" style="color: #64748b;">FORM MJO</div>
                         <div class="h5 mb-0 font-weight-black" id="totalMjo" style="color: #0f172a;">{{ number_format($totalMjo) }}</div>
                     </div>
-                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: {{ $canAccessMjo ? '#0284c7' : '#94a3b8' }};">
-                        <i class="fas {{ $canAccessMjo ? 'fa-tools' : 'fa-lock' }} text-xs"></i>
+                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: #0284c7;">
+                        <i class="fas fa-tools text-xs"></i>
                     </span>
                 </div>
             @if($canAccessMjo)
@@ -232,18 +211,15 @@
             @if($canAccessSchedule)
             <a href="{{ route('form-schedules.index') }}" class="card border-0 shadow-xs text-decoration-none bg-white hover:bg-slate-50 transition-all cursor-pointer" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs bg-white opacity-70" style="border-radius: 0.75rem; border: 1px solid #e2e8f0 !important; cursor: not-allowed;" title="Akses Terkunci untuk Role {{ Auth::user()->roles->pluck('name')->first() ?? 'User' }}">
+            <div class="card border-0 shadow-xs bg-white" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
                 <div class="card-body p-2.5 d-flex align-items-center justify-content-between">
                     <div>
-                        <div class="uppercase text-[10px] font-weight-black d-flex align-items-center" style="color: #64748b;">
-                            SCHEDULE
-                            @if(!$canAccessSchedule)<i class="fas fa-lock text-danger text-[9px] ml-1" title="Akses Terkunci"></i>@endif
-                        </div>
+                        <div class="uppercase text-[10px] font-weight-black" style="color: #64748b;">SCHEDULE</div>
                         <div class="h5 mb-0 font-weight-black" id="totalSchedule" style="color: #0f172a;">{{ number_format($totalSchedule) }}</div>
                     </div>
-                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: {{ $canAccessSchedule ? '#10b981' : '#94a3b8' }};">
-                        <i class="fas {{ $canAccessSchedule ? 'fa-calendar-check' : 'fa-lock' }} text-xs"></i>
+                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: #10b981;">
+                        <i class="fas fa-calendar-check text-xs"></i>
                     </span>
                 </div>
             @if($canAccessSchedule)
@@ -270,6 +246,7 @@
         </div>
         @endif
     </div>
+
 
     <!-- Main Table 1: Status Cetakan Naik Terbaru (Matching Heater Project Table Style) -->
     <div class="row mb-4">
