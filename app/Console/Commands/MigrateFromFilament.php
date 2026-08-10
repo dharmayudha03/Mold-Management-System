@@ -57,20 +57,36 @@ class MigrateFromFilament extends Command
 
         $this->info("\nMemulai proses migrasi data...");
 
-        // 1. Migrate Form Setup Cetakan
-        $this->migrateTable($sourceConnection, 'form_setup_cetakans', 'form_setup_cetakans', 'Form Setup Cetakan');
+        // Disable foreign key checks during migration if driver is pgsql
+        if (DB::getDriverName() === 'pgsql') {
+            try {
+                DB::statement("SET CONSTRAINTS ALL DEFERRED");
+            } catch (\Exception $e) {}
+        }
 
-        // 2. Migrate Form Sandblasting
-        $this->migrateTable($sourceConnection, 'form_sandblastings', 'form_sandblastings', 'Form Sandblasting');
+        // STEP 1: MASTER DATA (Migrasikan tabel master terlebih dahulu)
+        $this->info("\n--- [1/2] MEMINDAHKAN MASTER DATA ---");
+        $this->migrateTable($sourceConnection, 'kategoris', 'kategoris', 'Master Kategori');
+        $this->migrateTable($sourceConnection, 'list_code_items', 'list_code_items', 'Master List Code Item');
+        $this->migrateTable($sourceConnection, 'set_code_items', 'set_code_items', 'Master Set Code Item');
+        $this->migrateTable($sourceConnection, 'cav_code_items', 'cav_code_items', 'Master Cavity Code Item');
+        $this->migrateTable($sourceConnection, 'name_mesins', 'name_mesins', 'Master Nama Mesin');
+        $this->migrateTable($sourceConnection, 'class_mesins', 'class_mesins', 'Master Class Mesin');
+        $this->migrateTable($sourceConnection, 'list_mesins', 'list_mesins', 'Master List Mesin');
+        $this->migrateTable($sourceConnection, 'list_raks', 'list_raks', 'Master List Rak');
+        $this->migrateTable($sourceConnection, 'list_no_raks', 'list_no_raks', 'Master List No Rak');
+        $this->migrateTable($sourceConnection, 'penomoran_raks', 'penomoran_raks', 'Master Penomoran Rak');
+        $this->migrateTable($sourceConnection, 'detail_users', 'detail_users', 'Master Karyawan PIC');
 
-        // 3. Migrate Form Repair Cetakan (PEJO)
-        $this->migrateTable($sourceConnection, 'form_repair_cetakans', 'form_repair_cetakans', 'Form Repair Cetakan (PEJO)');
-
-        // 4. Migrate Form Schedule
+        // STEP 2: TRANSAKSI & FORM REPORT DATA (Migrasikan data formulir)
+        $this->info("\n--- [2/2] MEMINDAHKAN DATA TRANSAKSI & FORMULIR ---");
         $this->migrateTable($sourceConnection, 'form_schedules', 'form_schedules', 'Form Schedule');
-
-        // 5. Migrate Form MJO
+        $this->migrateTable($sourceConnection, 'form_setup_cetakans', 'form_setup_cetakans', 'Form Setup Cetakan');
+        $this->migrateTable($sourceConnection, 'form_sandblastings', 'form_sandblastings', 'Form Sandblasting');
+        $this->migrateTable($sourceConnection, 'form_repair_cetakans', 'form_repair_cetakans', 'Form Repair Cetakan (PEJO)');
         $this->migrateTable($sourceConnection, 'form_mjos', 'form_mjos', 'Form MJO');
+        $this->migrateTable($sourceConnection, 'cetakan_naiks', 'cetakan_naiks', 'Cetakan Naik');
+        $this->migrateTable($sourceConnection, 'history_cetakans', 'history_cetakans', 'History Cetakan');
 
         $this->newLine();
         $this->info("=================================================");
@@ -104,15 +120,19 @@ class MigrateFromFilament extends Command
                 foreach ($sourceRows as $row) {
                     $data = (array) $row;
                     
-                    // Ignore ID auto-increment conflict if already exists
+                    // Upsert or insert with exact ID preservation
                     if (isset($data['id'])) {
-                        $exists = DB::table($targetTable)->where('id', $data['id'])->exists();
+                        $id = $data['id'];
+                        $exists = DB::table($targetTable)->where('id', $id)->exists();
                         if ($exists) {
-                            unset($data['id']);
+                            DB::table($targetTable)->where('id', $id)->update($data);
+                        } else {
+                            DB::table($targetTable)->insert($data);
                         }
+                    } else {
+                        DB::table($targetTable)->insert($data);
                     }
 
-                    DB::table($targetTable)->insert($data);
                     $imported++;
                     $bar->advance();
                 }
@@ -122,8 +142,26 @@ class MigrateFromFilament extends Command
             $this->newLine();
             $this->info("[+] BERHASIL: {$imported} record '{$label}' berhasil diimpor.");
 
+            // Reset PostgreSQL sequence ID after batch insert
+            $this->resetPgsqlSequence($targetTable);
+
         } catch (\Exception $e) {
             $this->error("\n[-] Gagal mengimpor {$label}: " . $e->getMessage());
+        }
+    }
+
+    private function resetPgsqlSequence(string $table)
+    {
+        try {
+            if (DB::getDriverName() === 'pgsql') {
+                $maxId = DB::table($table)->max('id');
+                if ($maxId) {
+                    $seqName = "{$table}_id_seq";
+                    DB::statement("SELECT setval('{$seqName}', {$maxId})");
+                }
+            }
+        } catch (\Exception $e) {
+            // Sequence reset optional fallback
         }
     }
 }
