@@ -86,6 +86,11 @@ class MigrateFromFilament extends Command
         $this->migrateTable($sourceConnection, 'form_schedules', 'form_schedules', 'Form Schedule');
         $this->migrateTable($sourceConnection, 'form_setup_cetakans', 'form_setup_cetakans', 'Form Setup Cetakan');
         $this->migrateTable($sourceConnection, 'form_sandblastings', 'form_sandblastings', 'Form Sandblasting');
+        
+        // PIVOT RELASI PIC KARYAWAN (Detail User Forms)
+        $this->migrateTable($sourceConnection, 'detail_user_form_setup_cetakan', 'detail_user_form_setup_cetakan', 'Relasi PIC Form Setup Cetakan');
+        $this->migrateTable($sourceConnection, 'detail_user_form_sandblasting', 'detail_user_form_sandblasting', 'Relasi PIC Form Sandblasting');
+
         $this->migrateTable($sourceConnection, 'form_repair_cetakans', 'form_repair_cetakans', 'Form Repair Cetakan (PEJO)');
         $this->migrateTable($sourceConnection, 'form_mjos', 'form_mjos', 'Form MJO');
         $this->migrateTable($sourceConnection, 'cetakan_naiks', 'cetakan_naiks', 'Cetakan Naik');
