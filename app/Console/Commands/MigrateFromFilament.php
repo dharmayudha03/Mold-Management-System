@@ -64,15 +64,18 @@ class MigrateFromFilament extends Command
             } catch (\Exception $e) {}
         }
 
-        // STEP 1: MASTER DATA (Migrasikan tabel master terlebih dahulu)
+        // STEP 1: MASTER DATA (Migrasikan tabel master terlebih dahulu dengan urutan dependensi yang benar)
         $this->info("\n--- [1/2] MEMINDAHKAN MASTER DATA ---");
         $this->migrateTable($sourceConnection, 'kategoris', 'kategoris', 'Master Kategori');
         $this->migrateTable($sourceConnection, 'list_code_items', 'list_code_items', 'Master List Code Item');
         $this->migrateTable($sourceConnection, 'set_code_items', 'set_code_items', 'Master Set Code Item');
         $this->migrateTable($sourceConnection, 'cav_code_items', 'cav_code_items', 'Master Cavity Code Item');
+        
+        // Parent Mesin (list_mesins) HARUS diimpor duluan sebelum child (name_mesins & class_mesins)!
+        $this->migrateTable($sourceConnection, 'list_mesins', 'list_mesins', 'Master List Mesin');
         $this->migrateTable($sourceConnection, 'name_mesins', 'name_mesins', 'Master Nama Mesin');
         $this->migrateTable($sourceConnection, 'class_mesins', 'class_mesins', 'Master Class Mesin');
-        $this->migrateTable($sourceConnection, 'list_mesins', 'list_mesins', 'Master List Mesin');
+        
         $this->migrateTable($sourceConnection, 'list_raks', 'list_raks', 'Master List Rak');
         $this->migrateTable($sourceConnection, 'list_no_raks', 'list_no_raks', 'Master List No Rak');
         $this->migrateTable($sourceConnection, 'penomoran_raks', 'penomoran_raks', 'Master Penomoran Rak');
