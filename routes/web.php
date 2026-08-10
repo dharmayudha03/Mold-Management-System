@@ -25,10 +25,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DetailUserController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
-
-Route::any('/', function () {
-    return redirect()->route('login');
-});
+Route::redirect('/', '/login');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
