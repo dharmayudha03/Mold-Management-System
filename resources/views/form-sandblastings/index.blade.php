@@ -25,7 +25,7 @@
 
                 <!-- Action Buttons -->
                 <div class="d-flex align-items-center gap-2 shrink-0">
-                    <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold px-3 py-2" data-toggle="modal" data-target="#exportFilterModalSandblasting" style="border-radius: 0.75rem;">
+                    <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold px-3 py-2" data-bs-toggle="modal" data-bs-target="#exportFilterModalSandblasting" data-toggle="modal" data-target="#exportFilterModalSandblasting" onclick="openSandblastingExportModal()" style="border-radius: 0.75rem;">
                         <i class="fas fa-download mr-1.5"></i> Download Laporan
                     </button>
                     @if(!auth()->user()->hasRole('User'))
@@ -47,7 +47,7 @@
                     <h5 class="modal-title font-weight-black text-gray-900 text-base" id="exportFilterModalSandblastingLabel">
                         <i class="fas fa-filter text-primary mr-2"></i>Filter Download Form Sandblasting
                     </h5>
-                    <button type="button" class="close text-gray-400" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close text-gray-400" data-bs-dismiss="modal" data-dismiss="modal" onclick="closeSandblastingExportModal()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -96,6 +96,9 @@
                         </div>
                     </div>
                     <div class="modal-footer bg-light border-top-0 px-4 py-3 d-flex align-items-center justify-content-end gap-2" style="border-radius: 0 0 1.25rem 1.25rem;">
+                        <button type="button" class="btn btn-sm btn-secondary font-weight-bold px-3 py-2" data-bs-dismiss="modal" data-dismiss="modal" onclick="closeSandblastingExportModal()" style="border-radius: 0.75rem;">
+                            Batal
+                        </button>
                         <button type="submit" onclick="submitSandblastingExport('csv')" class="btn btn-sm btn-success font-weight-bold px-3.5 py-2" style="background-color: #059669; border: none; border-radius: 0.75rem;">
                             <i class="fas fa-file-csv mr-1.5"></i> Export CSV
                         </button>
@@ -109,6 +112,39 @@
     </div>
 
     <script>
+        function openSandblastingExportModal() {
+            const modalEl = document.getElementById('exportFilterModalSandblasting');
+            if (!modalEl) return;
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (!modalInstance) {
+                    modalInstance = new bootstrap.Modal(modalEl);
+                }
+                modalInstance.show();
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $('#exportFilterModalSandblasting').modal('show');
+            } else {
+                modalEl.classList.add('show');
+                modalEl.style.display = 'block';
+            }
+        }
+
+        function closeSandblastingExportModal() {
+            const modalEl = document.getElementById('exportFilterModalSandblasting');
+            if (!modalEl) return;
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $('#exportFilterModalSandblasting').modal('hide');
+            } else {
+                modalEl.classList.remove('show');
+                modalEl.style.display = 'none';
+            }
+        }
+
         function submitSandblastingExport(type) {
             const form = document.getElementById('exportFilterSandblastingForm');
             if (type === 'csv') {
