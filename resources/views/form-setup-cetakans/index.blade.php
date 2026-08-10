@@ -25,14 +25,9 @@
 
                 <!-- Action Buttons -->
                 <div class="d-flex align-items-center gap-2 shrink-0">
-                    @if(!auth()->user()->hasRole('Setup & Maintenance') && !auth()->user()->hasRole('Setup') && !auth()->user()->hasRole('Maintenance'))
-                    <a href="{{ route('form-setup-cetakans.export-csv') }}" class="btn btn-sm btn-success font-weight-bold px-3 py-2" style="background-color: #059669; border: none; border-radius: 0.75rem;">
-                        <i class="fas fa-file-csv mr-1.5"></i> Export CSV
-                    </a>
-                    <a href="{{ route('form-setup-cetakans.print-pdf') }}" target="_blank" class="btn btn-sm btn-warning font-weight-bold px-3 py-2 text-dark" style="background-color: #f59e0b; border: none; border-radius: 0.75rem; color: #1e293b !important;">
-                        <i class="fas fa-print mr-1.5"></i> Print PDF
-                    </a>
-                    @endif
+                    <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold px-3 py-2" data-toggle="modal" data-target="#exportFilterModal" style="border-radius: 0.75rem;">
+                        <i class="fas fa-download mr-1.5"></i> Download Laporan
+                    </button>
                     @if(!auth()->user()->hasRole('User'))
                     <a href="{{ route('form-setup-cetakans.create') }}" class="btn btn-sm btn-primary font-weight-bold px-3.5 py-2" style="background-color: #2563eb; border: none; border-radius: 0.75rem;">
                         <i class="fas fa-plus mr-1.5"></i> Tambah Setup
@@ -43,6 +38,88 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Filter Download Laporan -->
+    <div class="modal fade" id="exportFilterModal" tabindex="-1" role="dialog" aria-labelledby="exportFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
+                <div class="modal-header bg-white border-bottom-0 pb-0 pt-4 px-4">
+                    <h5 class="modal-title font-weight-black text-gray-900 text-base" id="exportFilterModalLabel">
+                        <i class="fas fa-filter text-primary mr-2"></i>Filter Download Form Setup Cetakan
+                    </h5>
+                    <button type="button" class="close text-gray-400" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="exportFilterSetupForm" method="GET" action="{{ route('form-setup-cetakans.export-csv') }}">
+                    <div class="modal-body p-4 text-xs">
+                        <p class="text-gray-500 font-weight-bold mb-3">Pilih rentang tanggal dan rentang Code Item yang ingin di-download (biarkan kosong jika ingin mendownload semua data):</p>
+                        
+                        <!-- Filter Tanggal -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-extrabold text-gray-800 uppercase text-[10px] mb-1 d-block">Rentang Tanggal</label>
+                            <div class="row no-gutters gap-2">
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Mulai Tanggal:</label>
+                                    <input type="date" name="start_date" class="form-control text-xs" style="border-radius: 0.65rem;">
+                                </div>
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Sampai Tanggal:</label>
+                                    <input type="date" name="end_date" class="form-control text-xs" style="border-radius: 0.65rem;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filter Code Item Range -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-extrabold text-gray-800 uppercase text-[10px] mb-1 d-block">Rentang Code Item</label>
+                            <div class="row no-gutters gap-2">
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Dari Code Item:</label>
+                                    <select name="start_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
+                                        <option value="">-- Semua Code Item --</option>
+                                        @foreach($listCodeItems as $codeItem)
+                                            <option value="{{ $codeItem->id }}">{{ $codeItem->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Sampai Code Item:</label>
+                                    <select name="end_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
+                                        <option value="">-- Semua Code Item --</option>
+                                        @foreach($listCodeItems as $codeItem)
+                                            <option value="{{ $codeItem->id }}">{{ $codeItem->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light border-top-0 px-4 py-3 d-flex align-items-center justify-content-end gap-2" style="border-radius: 0 0 1.25rem 1.25rem;">
+                        <button type="submit" onclick="submitSetupExport('csv')" class="btn btn-sm btn-success font-weight-bold px-3.5 py-2" style="background-color: #059669; border: none; border-radius: 0.75rem;">
+                            <i class="fas fa-file-csv mr-1.5"></i> Export CSV
+                        </button>
+                        <button type="submit" onclick="submitSetupExport('pdf')" class="btn btn-sm btn-warning font-weight-bold px-3.5 py-2 text-dark" style="background-color: #f59e0b; border: none; border-radius: 0.75rem; color: #1e293b !important;">
+                            <i class="fas fa-print mr-1.5"></i> Print PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function submitSetupExport(type) {
+            const form = document.getElementById('exportFilterSetupForm');
+            if (type === 'csv') {
+                form.action = "{{ route('form-setup-cetakans.export-csv') }}";
+                form.target = "_self";
+            } else {
+                form.action = "{{ route('form-setup-cetakans.print-pdf') }}";
+                form.target = "_blank";
+            }
+        }
+    </script>
 
     <!-- Table Card -->
     <div class="card shadow-sm border-0 mb-4" id="data-table-card" style="border-radius: 1rem;">

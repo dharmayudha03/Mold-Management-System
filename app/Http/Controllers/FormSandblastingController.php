@@ -39,15 +39,39 @@ class FormSandblastingController extends Controller
         }
 
         $formSandblastings = $query->latest()->paginate(25)->withQueryString();
+        $listCodeItems = ListCodeItem::orderBy('name')->get();
 
-        return view('form-sandblastings.index', compact('formSandblastings', 'search'));
+        return view('form-sandblastings.index', compact('formSandblastings', 'search', 'listCodeItems'));
     }
 
     public function exportCsv(Request $request)
     {
         $fileName = 'Form_Sandblasting_' . date('Ymd_His') . '.csv';
 
-        $items = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser'])->latest()->get();
+        $query = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser']);
+
+        // Filter Tanggal
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->input('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->input('end_date'));
+        }
+
+        // Filter Code Item (Range / Single)
+        if ($request->filled('start_code_item_id') && $request->filled('end_code_item_id')) {
+            $startId = min($request->input('start_code_item_id'), $request->input('end_code_item_id'));
+            $endId = max($request->input('start_code_item_id'), $request->input('end_code_item_id'));
+            $query->whereBetween('list_code_item_id', [$startId, $endId]);
+        } elseif ($request->filled('start_code_item_id')) {
+            $query->where('list_code_item_id', '>=', $request->input('start_code_item_id'));
+        } elseif ($request->filled('end_code_item_id')) {
+            $query->where('list_code_item_id', '<=', $request->input('end_code_item_id'));
+        } elseif ($request->filled('code_item_id')) {
+            $query->where('list_code_item_id', $request->input('code_item_id'));
+        }
+
+        $items = $query->latest('tanggal')->get();
 
         $response = new StreamedResponse(function () use ($items) {
             $handle = fopen('php://output', 'w');
@@ -89,7 +113,30 @@ class FormSandblastingController extends Controller
 
     public function printPdf(Request $request)
     {
-        $items = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser'])->latest()->get();
+        $query = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser']);
+
+        // Filter Tanggal
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->input('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->input('end_date'));
+        }
+
+        // Filter Code Item (Range / Single)
+        if ($request->filled('start_code_item_id') && $request->filled('end_code_item_id')) {
+            $startId = min($request->input('start_code_item_id'), $request->input('end_code_item_id'));
+            $endId = max($request->input('start_code_item_id'), $request->input('end_code_item_id'));
+            $query->whereBetween('list_code_item_id', [$startId, $endId]);
+        } elseif ($request->filled('start_code_item_id')) {
+            $query->where('list_code_item_id', '>=', $request->input('start_code_item_id'));
+        } elseif ($request->filled('end_code_item_id')) {
+            $query->where('list_code_item_id', '<=', $request->input('end_code_item_id'));
+        } elseif ($request->filled('code_item_id')) {
+            $query->where('list_code_item_id', $request->input('code_item_id'));
+        }
+
+        $items = $query->latest('tanggal')->get();
         return view('form-sandblastings.pdf', compact('items'));
     }
 
