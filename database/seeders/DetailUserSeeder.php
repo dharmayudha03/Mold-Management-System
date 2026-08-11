@@ -41,6 +41,7 @@ class DetailUserSeeder extends Seeder
 
             // Setup & Maintenance Operators
             ['role_id' => $smId, 'name' => 'Rohimah'],
+            ['role_id' => $smId, 'name' => 'Rohiman'],
             ['role_id' => $smId, 'name' => 'Benny'],
             ['role_id' => $smId, 'name' => 'Hariyanto'],
             ['role_id' => $smId, 'name' => 'Ullumudin'],
