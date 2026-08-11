@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- Instant Zero-Flicker Sidebar State Preserver -->
+    <script>
+        (function() {
+            if (window.innerWidth > 768 && localStorage.getItem('sidebar_collapsed') === '1') {
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
+        })();
+    </script>
+
     <title>{{ config('app.name', 'Mold Management System') }} — {{ $header ?? 'Dashboard' }}</title>
 
     <!-- Favicon Logo IRC INOAC -->
@@ -250,16 +259,22 @@
             z-index: 1020 !important;
         }
 
-        /* Sidebar Toggle Collapsed State */
-        body.sidebar-collapsed #accordionSidebar {
+        /* Instant Zero-Flicker Collapsed Sidebar Rules */
+        html.sidebar-collapsed #accordionSidebar,
+        body.sidebar-collapsed #accordionSidebar,
+        body.sidebar-toggled #accordionSidebar {
             width: 0 !important;
             overflow: hidden !important;
             padding: 0 !important;
         }
-        body.sidebar-collapsed #content-wrapper {
+        html.sidebar-collapsed #content-wrapper,
+        body.sidebar-collapsed #content-wrapper,
+        body.sidebar-toggled #content-wrapper {
             margin-left: 0 !important;
         }
-        body.sidebar-collapsed .topbar {
+        html.sidebar-collapsed .topbar,
+        body.sidebar-collapsed .topbar,
+        body.sidebar-toggled .topbar {
             left: 0 !important;
             width: 100% !important;
         }
@@ -925,29 +940,42 @@
     <script src="{{ asset('vendor/tom-select/tom-select.complete.min.js') }}"></script>
 
     <script>
-        // Sidebar Toggle Logic
+        // Sidebar Toggle & Persistent State Handler (Zero-Flicker Architecture)
         const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+        const sidebarToggleSub = document.getElementById('sidebarToggle');
         const sidebarOverlay   = document.getElementById('sidebar-overlay');
         const isMobile = () => window.innerWidth <= 768;
 
-        // Restore sidebar state from localStorage (desktop only)
-        if (!isMobile() && localStorage.getItem('sidebar_collapsed') === '1') {
-            document.body.classList.add('sidebar-collapsed');
+        function updateSidebarIcon(isCollapsed) {
+            const icon = document.getElementById('sidebarToggleIcon');
+            if (icon) {
+                icon.className = isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+            }
         }
 
-        if (sidebarToggleBtn) {
-            sidebarToggleBtn.addEventListener('click', function () {
-                if (isMobile()) {
-                    // Mobile: slide in/out
-                    document.body.classList.toggle('sidebar-mobile-open');
-                } else {
-                    // Desktop: collapse/expand
-                    document.body.classList.toggle('sidebar-collapsed');
-                    localStorage.setItem('sidebar_collapsed',
-                        document.body.classList.contains('sidebar-collapsed') ? '1' : '0'
-                    );
-                }
-            });
+        function toggleSidebar() {
+            if (isMobile()) {
+                document.body.classList.toggle('sidebar-mobile-open');
+            } else {
+                const isCollapsed = document.documentElement.classList.toggle('sidebar-collapsed');
+                document.body.classList.toggle('sidebar-collapsed', isCollapsed);
+                const sidebar = document.getElementById('accordionSidebar');
+                if (sidebar) sidebar.classList.toggle('toggled', isCollapsed);
+                localStorage.setItem('sidebar_collapsed', isCollapsed ? '1' : '0');
+                updateSidebarIcon(isCollapsed);
+            }
+        }
+
+        if (sidebarToggleBtn) sidebarToggleBtn.addEventListener('click', toggleSidebar);
+        if (sidebarToggleSub) sidebarToggleSub.addEventListener('click', toggleSidebar);
+
+        // Sync initial DOM state seamlessly on load
+        if (!isMobile() && localStorage.getItem('sidebar_collapsed') === '1') {
+            document.documentElement.classList.add('sidebar-collapsed');
+            document.body.classList.add('sidebar-collapsed');
+            const sidebar = document.getElementById('accordionSidebar');
+            if (sidebar) sidebar.classList.add('toggled');
+            updateSidebarIcon(true);
         }
 
         // Close sidebar on overlay click (mobile)
