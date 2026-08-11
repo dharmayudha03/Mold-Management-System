@@ -4,98 +4,110 @@
     </x-slot>
 
     <!-- Header & Action Toolbar Card -->
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body p-4">
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 1rem;">
+        <div class="card-body p-3.5">
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-                <div>
-                    <h2 class="h4 font-weight-bold text-gray-800 mb-1 flex items-center gap-2">
-                        <i class="fas fa-chart-line text-primary"></i>
-                        Laporan Tanggal Aktivitas, Status & Perbaikan Cetakan
-                    </h2>
-                    <p class="text-xs text-gray-500 mb-0">Pantau tanggal naik/masak terakhir, tanggal sandblasting, tanggal repair (PEJO/MJO), lokasi posisi cetakan, serta histori timeline lengkap per cetakan.</p>
-                </div>
+                
+                <!-- Search Form -->
+                <form method="GET" action="{{ route('reports.molds') }}" class="d-flex align-items-center gap-2">
+                    <div class="position-relative" style="width: 280px;">
+                        <i class="fas fa-search position-absolute text-gray-400" style="left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.8rem;"></i>
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari Spesifik Nama Code Item..." 
+                            class="form-control text-xs py-2" style="border-radius: 0.75rem; padding-left: 32px !important;">
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary font-weight-bold px-3.5 py-2" style="border-radius: 0.75rem; background-color: #2563eb; border: none;">
+                        <i class="fas fa-filter mr-1"></i> Filter
+                    </button>
+                    @if($startDate || $endDate || $startCodeId || $endCodeId || $search)
+                        <a href="{{ route('reports.molds') }}" class="btn btn-sm btn-outline-secondary font-weight-bold px-3 py-2" style="border-radius: 0.75rem;">Reset</a>
+                    @endif
+                </form>
 
-                <!-- Export Action Buttons -->
-                @php
-                    $queryParams = request()->query();
-                @endphp
-                <div class="d-flex items-center gap-2 shrink-0">
-                    <button type="button" id="open-preview-btn" data-bs-toggle="modal" data-bs-target="#previewModal" class="btn btn-sm btn-outline-secondary font-weight-bold shadow-sm">
+                <!-- Action Buttons -->
+                <div class="d-flex align-items-center gap-2 shrink-0">
+                    @if($canDownload)
+                    <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold px-3 py-2" data-bs-toggle="modal" data-bs-target="#exportFilterModalReport" data-toggle="modal" data-target="#exportFilterModalReport" onclick="openReportExportModal()" style="border-radius: 0.75rem;">
+                        <i class="fas fa-download mr-1.5"></i> Download Laporan
+                    </button>
+                    @endif
+                    <button type="button" id="open-preview-btn" data-bs-toggle="modal" data-bs-target="#previewModal" class="btn btn-sm btn-outline-secondary font-weight-bold px-3 py-2" style="border-radius: 0.75rem;">
                         <i class="fas fa-eye mr-1.5"></i> Preview Export
                     </button>
-                    <a href="{{ route('reports.molds.export-csv', $queryParams) }}" class="btn btn-sm btn-success font-weight-bold shadow-sm">
-                        <i class="fas fa-file-csv mr-1.5"></i> Export CSV
-                    </a>
-                    <a href="{{ route('reports.molds.print-pdf', $queryParams) }}" target="_blank" class="btn btn-sm btn-warning font-weight-bold shadow-sm text-dark" style="background-color: #f59e0b; border: none; color: #1e293b !important; border-radius: 0.75rem;">
-                        <i class="fas fa-print mr-1.5"></i> Print PDF
-                    </a>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Comprehensive Filter Form Card -->
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body p-4">
-            <form method="GET" action="{{ route('reports.molds') }}" class="space-y-4">
-                <div class="row">
-                    <!-- Date Range: Start -->
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label text-xs font-weight-bold text-gray-700 mb-1">Dari Tanggal</label>
-                        <input type="date" name="start_date" value="{{ $startDate }}" class="form-control text-xs">
-                    </div>
-
-                    <!-- Date Range: End -->
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label text-xs font-weight-bold text-gray-700 mb-1">Sampai Tanggal</label>
-                        <input type="date" name="end_date" value="{{ $endDate }}" class="form-control text-xs">
-                    </div>
-
-                    <!-- Code Item Range: Start -->
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label text-xs font-weight-bold text-gray-700 mb-1">Dari Code Item</label>
-                        <select name="start_code_item_id" id="report_start_code_item_id" class="form-select text-xs">
-                            <option value="">-- Semua Code Item --</option>
-                            @foreach($allCodeItems as $item)
-                                <option value="{{ $item->id }}" {{ $startCodeId == $item->id ? 'selected' : '' }}>
-                                    {{ $item->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Code Item Range: End -->
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label text-xs font-weight-bold text-gray-700 mb-1">Sampai Code Item</label>
-                        <select name="end_code_item_id" id="report_end_code_item_id" class="form-select text-xs">
-                            <option value="">-- Semua Code Item --</option>
-                            @foreach($allCodeItems as $item)
-                                <option value="{{ $item->id }}" {{ $endCodeId == $item->id ? 'selected' : '' }}>
-                                    {{ $item->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+    <!-- Modal Filter Download Laporan Mold Master -->
+    <div class="modal fade" id="exportFilterModalReport" tabindex="-1" role="dialog" aria-labelledby="exportFilterModalReportLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
+                <div class="modal-header bg-white border-bottom-0 pb-0 pt-4 px-4">
+                    <h5 class="modal-title font-weight-black text-gray-900 text-base" id="exportFilterModalReportLabel">
+                        <i class="fas fa-filter text-primary mr-2"></i>Filter Download Laporan Mold Master
+                    </h5>
+                    <button type="button" class="close text-gray-400" data-bs-dismiss="modal" data-dismiss="modal" onclick="closeReportExportModal()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+                <form id="exportFilterReportForm" method="GET" action="{{ route('reports.molds.export-csv') }}">
+                    <div class="modal-body p-4 text-xs">
+                        <p class="text-gray-500 font-weight-bold mb-3">Pilih rentang tanggal dan rentang Code Item yang ingin di-download (biarkan kosong jika ingin mendownload semua data):</p>
+                        
+                        <!-- Filter Tanggal -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-extrabold text-gray-800 uppercase text-[10px] mb-1 d-block">Rentang Tanggal</label>
+                            <div class="row no-gutters gap-2">
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Mulai Tanggal:</label>
+                                    <input type="date" name="start_date" value="{{ $startDate }}" class="form-control text-xs" style="border-radius: 0.65rem;">
+                                </div>
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Sampai Tanggal:</label>
+                                    <input type="date" name="end_date" value="{{ $endDate }}" class="form-control text-xs" style="border-radius: 0.65rem;">
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pt-3 border-top">
-                    <!-- Search Input -->
-                    <div class="relative flex-1">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari Spesifik Nama Code Item..." class="form-control text-xs px-3">
+                        <!-- Filter Code Item Range with TomSelect -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-extrabold text-gray-800 uppercase text-[10px] mb-1 d-block">Rentang Code Item</label>
+                            <div class="row no-gutters gap-2">
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Dari Code Item:</label>
+                                    <select name="start_code_item_id" id="report_modal_start_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
+                                        <option value="">-- Semua Code Item --</option>
+                                        @foreach($allCodeItems as $codeItem)
+                                            <option value="{{ $codeItem->id }}" {{ $startCodeId == $codeItem->id ? 'selected' : '' }}>{{ $codeItem->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Sampai Code Item:</label>
+                                    <select name="end_code_item_id" id="report_modal_end_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
+                                        <option value="">-- Semua Code Item --</option>
+                                        @foreach($allCodeItems as $codeItem)
+                                            <option value="{{ $codeItem->id }}" {{ $endCodeId == $codeItem->id ? 'selected' : '' }}>{{ $codeItem->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="d-flex items-center gap-2 shrink-0">
-                        <button type="submit" class="btn btn-sm btn-primary font-weight-bold px-4">
-                            <i class="fas fa-filter mr-1.5"></i> Terapkan Filter Laporan
+                    <div class="modal-footer bg-light border-top-0 px-4 py-3 d-flex align-items-center justify-content-end gap-2" style="border-radius: 0 0 1.25rem 1.25rem;">
+                        <button type="button" class="btn btn-sm btn-secondary font-weight-bold px-3 py-2" data-bs-dismiss="modal" data-dismiss="modal" onclick="closeReportExportModal()" style="border-radius: 0.75rem;">
+                            Batal
                         </button>
-                        @if($startDate || $endDate || $startCodeId || $endCodeId || $search)
-                            <a href="{{ route('reports.molds') }}" class="btn btn-sm btn-outline-secondary font-weight-bold px-3">
-                                Reset Filter
-                            </a>
-                        @endif
+                        <button type="submit" onclick="submitReportExport('csv')" class="btn btn-sm btn-success font-weight-bold px-3.5 py-2" style="background-color: #059669; border: none; border-radius: 0.75rem;">
+                            <i class="fas fa-file-csv mr-1.5"></i> Export CSV
+                        </button>
+                        <button type="submit" onclick="submitReportExport('pdf')" class="btn btn-sm btn-warning font-weight-bold px-3.5 py-2 text-dark" style="background-color: #f59e0b; border: none; border-radius: 0.75rem; color: #1e293b !important;">
+                            <i class="fas fa-print mr-1.5"></i> Print PDF
+                        </button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -416,8 +428,8 @@
             });
 
             if (typeof TomSelect !== 'undefined') {
-                const sEl = document.getElementById('report_start_code_item_id');
-                const eEl = document.getElementById('report_end_code_item_id');
+                const sEl = document.getElementById('report_modal_start_code_item_id');
+                const eEl = document.getElementById('report_modal_end_code_item_id');
                 if (sEl && !sEl.tomselect) {
                     new TomSelect(sEl, {
                         plugins: {
@@ -448,5 +460,49 @@
                 }
             }
         });
+
+        function openReportExportModal() {
+            const modalEl = document.getElementById('exportFilterModalReport');
+            if (!modalEl) return;
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (!modalInstance) {
+                    modalInstance = new bootstrap.Modal(modalEl);
+                }
+                modalInstance.show();
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $('#exportFilterModalReport').modal('show');
+            } else {
+                modalEl.classList.add('show');
+                modalEl.style.display = 'block';
+            }
+        }
+
+        function closeReportExportModal() {
+            const modalEl = document.getElementById('exportFilterModalReport');
+            if (!modalEl) return;
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                $('#exportFilterModalReport').modal('hide');
+            } else {
+                modalEl.classList.remove('show');
+                modalEl.style.display = 'none';
+            }
+        }
+
+        function submitReportExport(type) {
+            const form = document.getElementById('exportFilterReportForm');
+            if (type === 'csv') {
+                form.action = "{{ route('reports.molds.export-csv') }}";
+                form.target = "_self";
+            } else {
+                form.action = "{{ route('reports.molds.print-pdf') }}";
+                form.target = "_blank";
+            }
+        }
     </script>
 </x-app-layout>

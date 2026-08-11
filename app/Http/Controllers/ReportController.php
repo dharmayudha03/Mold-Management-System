@@ -138,9 +138,12 @@ class ReportController extends Controller
         $statusFilter = $request->query('status_filter', 'all');
         $search = $request->query('search');
 
+        $user = auth()->user();
+        $canDownload = $user && ($user->hasRole('User') || $user->hasRole('super_admin'));
+
         return view('reports.molds', compact(
             'codeItems', 'allCodeItems', 'startDate', 'endDate',
-            'startCodeId', 'endCodeId', 'statusFilter', 'search'
+            'startCodeId', 'endCodeId', 'statusFilter', 'search', 'canDownload'
         ));
     }
 
