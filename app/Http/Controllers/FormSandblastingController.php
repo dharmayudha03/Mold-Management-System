@@ -255,6 +255,7 @@ class FormSandblastingController extends Controller
 
         $roles = $this->getFilteredRoles();
         $detailUsers = $this->getFilteredDetailUsers();
+        $listCodeItems = ListCodeItem::all();
         $setCodeItems = collect();
         $cavCodeItems = collect();
         $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')->pluck('list_mesin_id')->toArray();
