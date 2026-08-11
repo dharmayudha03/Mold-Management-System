@@ -166,6 +166,7 @@ class ListMesinSeeder extends Seeder
             array('code' => '02 REP 04', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('code' => '02 IMD 65', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('code' => '02 IMD 66', 'created_at' => $timestamp, 'updated_at' => $timestamp),
+            array('code' => '02 IMD 67', 'created_at' => $timestamp, 'updated_at' => $timestamp),
 
         );
         DB::table('list_mesins')->insert($mesin);
