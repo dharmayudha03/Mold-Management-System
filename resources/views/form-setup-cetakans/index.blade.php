@@ -9,11 +9,7 @@
         $authUser->hasRole('super_admin') || 
         $authUser->email === 'admin@admin.com' || 
         $authUser->hasRole('User') || 
-        $authUser->hasRole('user') || 
-        $authUser->hasRole('Leader') || 
-        $authUser->hasRole('Supervisor') || 
-        $authUser->hasRole('leader') || 
-        $authUser->hasRole('supervisor')
+        $authUser->hasRole('user')
     );
 @endphp
 
