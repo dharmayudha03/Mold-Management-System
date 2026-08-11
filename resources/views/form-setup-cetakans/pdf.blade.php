@@ -37,45 +37,51 @@
     <table>
         <thead>
             <tr>
-                <th>NO DOC</th>
-                <th>TANGGAL</th>
-                <th>KATEGORI</th>
-                <th>CODE ITEM</th>
-                <th>MOLD SET</th>
-                <th>MOLD CAVITY</th>
-                <th>MESIN</th>
-                <th>SHIFT</th>
-                <th class="text-center">GUIDE PEN</th>
-                <th class="text-center">BUSING</th>
-                <th class="text-center">BAUT</th>
-                <th class="text-center">CORE</th>
-                <th class="text-center">PISTON</th>
-                <th class="text-center">POT</th>
+                <th class="text-center">Tanggal</th>
+                <th>Kategori</th>
+                <th class="text-center">Shift</th>
+                <th>Nama Karyawan</th>
+                <th class="text-center">Code Item</th>
+                <th class="text-center">Mold Set</th>
+                <th class="text-center">Mold Cav</th>
+                <th class="text-center">No Mesin</th>
+                <th class="text-center">Cav NG</th>
+                <th class="text-center">Guide Pen</th>
+                <th class="text-center">Busing</th>
+                <th class="text-center">Baut / Mur</th>
+                <th class="text-center">Core</th>
+                <th class="text-center">Piston</th>
+                <th class="text-center">Pot</th>
                 <th class="text-center">PL</th>
-                <th class="text-center">CAV NG</th>
-                <th>PIC KARYAWAN</th>
             </tr>
         </thead>
         <tbody>
             @foreach($items as $item)
+                @php
+                    $formatCheck = function($val) {
+                        if (empty($val) || $val === '-' || strtoupper($val) === 'NG' || $val === '0') {
+                            return '-';
+                        }
+                        return '√';
+                    };
+                @endphp
                 <tr>
-                    <td><strong>{{ $item->nodoc }}</strong></td>
-                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
-                    <td>{{ $item->kategori->name ?? '-' }}</td>
-                    <td><strong>{{ $item->listCodeItem->name ?? '-' }}</strong></td>
-                    <td>{{ $item->setCodeItem->moldset ?? '-' }}</td>
-                    <td>{{ $item->cavCodeItem->moldcav ?? '-' }}</td>
-                    <td>{{ $item->listMesin->code ?? '-' }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
+                    <td>{{ strtoupper($item->kategori->name ?? '-') }}</td>
                     <td class="text-center">{{ $item->shift }}</td>
-                    <td class="text-center">{{ $item->guidepen ?? '-' }}</td>
-                    <td class="text-center">{{ $item->busing ?? '-' }}</td>
-                    <td class="text-center">{{ $item->baut ?? '-' }}</td>
-                    <td class="text-center">{{ $item->core ?? '-' }}</td>
-                    <td class="text-center">{{ $item->piston ?? '-' }}</td>
-                    <td class="text-center">{{ $item->pot ?? '-' }}</td>
-                    <td class="text-center">{{ $item->pl ?? '-' }}</td>
-                    <td class="text-center">{{ $item->cav_ng ?? 0 }}</td>
                     <td>{{ $item->detailUser->pluck('name')->implode(', ') ?: '-' }}</td>
+                    <td class="text-center"><strong>{{ $item->listCodeItem->name ?? '-' }}</strong></td>
+                    <td class="text-center">{{ $item->setCodeItem->moldset ?? '-' }}</td>
+                    <td class="text-center">{{ $item->cavCodeItem->moldcav ?? '-' }}</td>
+                    <td class="text-center">{{ $item->listMesin->code ?? '-' }}</td>
+                    <td class="text-center">{{ $item->cav_ng ?? 0 }}</td>
+                    <td class="text-center">{{ $formatCheck($item->guidepen) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->busing) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->baut) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->core) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->piston) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->pot) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->pl) }}</td>
                 </tr>
             @endforeach
         </tbody>

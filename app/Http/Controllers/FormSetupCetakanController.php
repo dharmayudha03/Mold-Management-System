@@ -391,4 +391,98 @@ class FormSetupCetakanController extends Controller
         $formSetupCetakan->delete();
         return redirect()->route('form-setup-cetakans.index')->with('success', 'Form Setup Cetakan berhasil dihapus!');
     }
+
+    private function getFilteredExportData(Request $request)
+    {
+        $query = FormSetupCetakan::with(['kategori', 'listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'detailUser']);
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->input('start_date'));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->input('end_date'));
+        }
+        if ($request->filled('start_code_item_id')) {
+            $query->where('list_code_item_id', '>=', $request->input('start_code_item_id'));
+        }
+        if ($request->filled('end_code_item_id')) {
+            $query->where('list_code_item_id', '<=', $request->input('end_code_item_id'));
+        }
+
+        return $query->orderBy('tanggal', 'desc')->get();
+    }
+
+    public function exportCsv(Request $request)
+    {
+        $fileName = 'Laporan_Form_Setup_Cetakan_' . date('Ymd_His') . '.csv';
+        $items = $this->getFilteredExportData($request);
+
+        $response = new StreamedResponse(function () use ($items) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
+
+            fputcsv($handle, [
+                'Tanggal',
+                'Kategori',
+                'Shift',
+                'Nama Karyawan',
+                'Code Item',
+                'Mold Set',
+                'Mold Cav',
+                'No Mesin',
+                'Cav NG',
+                'Guide Pen',
+                'Busing',
+                'Baut / Mur',
+                'Core',
+                'Piston',
+                'Pot',
+                'PL'
+            ]);
+
+            $formatCheck = function($val) {
+                if (empty($val) || $val === '-' || strtoupper($val) === 'NG' || $val === '0') {
+                    return '-';
+                }
+                return '√';
+            };
+
+            foreach ($items as $item) {
+                fputcsv($handle, [
+                    \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y'),
+                    strtoupper($item->kategori->name ?? '-'),
+                    $item->shift,
+                    $item->detailUser->pluck('name')->implode(', ') ?: '-',
+                    $item->listCodeItem->name ?? '-',
+                    $item->setCodeItem->moldset ?? '-',
+                    $item->cavCodeItem->moldcav ?? '-',
+                    $item->listMesin->code ?? '-',
+                    $item->cav_ng ?? 0,
+                    $formatCheck($item->guidepen),
+                    $formatCheck($item->busing),
+                    $formatCheck($item->baut),
+                    $formatCheck($item->core),
+                    $formatCheck($item->piston),
+                    $formatCheck($item->pot),
+                    $formatCheck($item->pl)
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+        return $response;
+    }
+
+    public function printPdf(Request $request)
+    {
+        $items = $this->getFilteredExportData($request);
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return view('form-setup-cetakans.pdf', compact('items', 'startDate', 'endDate'));
+    }
 }
