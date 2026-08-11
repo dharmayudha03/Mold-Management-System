@@ -3,6 +3,20 @@
         Form Sandblasting Cetakan
     </x-slot>
 
+@php
+    $authUser = auth()->user();
+    $canDownload = $authUser && (
+        $authUser->hasRole('super_admin') || 
+        $authUser->email === 'admin@admin.com' || 
+        $authUser->hasRole('User') || 
+        $authUser->hasRole('user') || 
+        $authUser->hasRole('Leader') || 
+        $authUser->hasRole('Supervisor') || 
+        $authUser->hasRole('leader') || 
+        $authUser->hasRole('supervisor')
+    );
+@endphp
+
     <!-- Header Actions & Search Card -->
     <div class="card shadow-sm border-0 mb-4" style="border-radius: 1rem;">
         <div class="card-body p-3.5">
@@ -25,9 +39,11 @@
 
                 <!-- Action Buttons -->
                 <div class="d-flex align-items-center gap-2 shrink-0">
+                    @if($canDownload)
                     <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold px-3 py-2" data-bs-toggle="modal" data-bs-target="#exportFilterModalSandblasting" data-toggle="modal" data-target="#exportFilterModalSandblasting" onclick="openSandblastingExportModal()" style="border-radius: 0.75rem;">
                         <i class="fas fa-download mr-1.5"></i> Download Laporan
                     </button>
+                    @endif
                     @if(!auth()->user()->hasRole('User'))
                     <a href="{{ route('form-sandblastings.create') }}" class="btn btn-sm btn-primary font-weight-bold px-3.5 py-2" style="background-color: #2563eb; border: none; border-radius: 0.75rem;">
                         <i class="fas fa-plus mr-1.5"></i> Tambah Sandblasting
@@ -70,13 +86,13 @@
                             </div>
                         </div>
 
-                        <!-- Filter Code Item Range -->
+                        <!-- Filter Code Item Range with TomSelect -->
                         <div class="form-group mb-3">
                             <label class="font-weight-extrabold text-gray-800 uppercase text-[10px] mb-1 d-block">Rentang Code Item</label>
                             <div class="row no-gutters gap-2">
                                 <div class="col">
                                     <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Dari Code Item:</label>
-                                    <select name="start_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
+                                    <select name="start_code_item_id" id="sandblasting_start_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
                                         <option value="">-- Semua Code Item --</option>
                                         @foreach($listCodeItems as $codeItem)
                                             <option value="{{ $codeItem->id }}">{{ $codeItem->name }}</option>
@@ -85,7 +101,7 @@
                                 </div>
                                 <div class="col">
                                     <label class="text-[10px] text-gray-500 font-weight-bold mb-1">Sampai Code Item:</label>
-                                    <select name="end_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
+                                    <select name="end_code_item_id" id="sandblasting_end_code_item_id" class="form-control text-xs custom-select" style="border-radius: 0.65rem;">
                                         <option value="">-- Semua Code Item --</option>
                                         @foreach($listCodeItems as $codeItem)
                                             <option value="{{ $codeItem->id }}">{{ $codeItem->name }}</option>
@@ -112,6 +128,27 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof TomSelect !== 'undefined') {
+                const startEl = document.getElementById('sandblasting_start_code_item_id');
+                const endEl = document.getElementById('sandblasting_end_code_item_id');
+                if (startEl && !startEl.tomselect) {
+                    new TomSelect(startEl, {
+                        create: false,
+                        placeholder: "-- Semua Code Item --",
+                        allowEmptyOption: true
+                    });
+                }
+                if (endEl && !endEl.tomselect) {
+                    new TomSelect(endEl, {
+                        create: false,
+                        placeholder: "-- Semua Code Item --",
+                        allowEmptyOption: true
+                    });
+                }
+            }
+        });
+
         function openSandblastingExportModal() {
             const modalEl = document.getElementById('exportFilterModalSandblasting');
             if (!modalEl) return;
