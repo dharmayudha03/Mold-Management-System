@@ -3,19 +3,6 @@
         Detail Users (Karyawan PIC)
     </x-slot>
 
-    <!-- Success Alert -->
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 0.85rem; background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0 !important;">
-        <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-check-circle mr-2 text-emerald-600" style="font-size: 1.1rem;"></i>
-                <span class="font-weight-bold text-xs">{{ session('success') }}</span>
-            </div>
-            <button type="button" class="btn-close text-xs" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    </div>
-    @endif
-
     <!-- Top Header Stats Cards -->
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-4">
@@ -110,18 +97,18 @@
                             <th class="py-3 pl-4" style="width: 70px;">NO</th>
                             <th class="py-3">NAMA KARYAWAN PIC</th>
                             <th class="py-3">GROUP / ROLE TUGAS</th>
-                            <th class="py-3 text-right pr-4" style="width: 140px;">AKSI</th>
+                            <th class="py-3 text-right pr-4" style="width: 100px;">AKSI</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($detailUsers as $index => $item)
                             <tr>
-                                <td class="font-weight-extrabold text-gray-500 pl-4">
+                                <td class="font-weight-extrabold text-gray-500 pl-4 align-middle">
                                     {{ $detailUsers->firstItem() + $index }}
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-primary font-weight-extrabold shadow-xs shrink-0" style="width: 36px; height: 36px; background-color: #eff6ff; border: 1px solid #bfdbfe; font-size: 0.8rem;">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-primary font-weight-extrabold shadow-xs shrink-0" style="width: 34px; height: 34px; background-color: #eff6ff; border: 1px solid #bfdbfe; font-size: 0.75rem;">
                                             {{ strtoupper(substr($item->name, 0, 2)) }}
                                         </div>
                                         <div>
@@ -130,7 +117,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     @php
                                         $roleName = $item->role->name ?? '-';
                                         $bg = '#f1f5f9';
@@ -151,16 +138,16 @@
                                         <i class="fas fa-shield-alt mr-1" style="font-size: 0.65rem;"></i>{{ $roleName }}
                                     </span>
                                 </td>
-                                <td class="text-right pr-4">
-                                    <div class="d-flex align-items-center justify-content-end gap-1">
-                                        <a href="{{ route('detail-users.edit', $item->id) }}" class="btn btn-xs btn-outline-primary font-weight-bold px-2 py-0.5" style="border-radius: 0.4rem; font-size: 0.7rem;" title="Edit Karyawan">
-                                            <i class="fas fa-edit mr-1" style="font-size: 0.65rem;"></i>Edit
+                                <td class="text-right pr-4 align-middle">
+                                    <div class="d-flex align-items-center justify-content-end gap-1.5">
+                                        <a href="{{ route('detail-users.edit', $item->id) }}" class="btn btn-xs btn-light text-primary border p-0 d-inline-flex align-items-center justify-content-center shadow-2xs" style="width: 28px; height: 28px; border-radius: 0.45rem; background-color: #f0f9ff; border-color: #bae6fd !important;" title="Edit Karyawan">
+                                            <i class="fas fa-pen" style="font-size: 0.65rem;"></i>
                                         </a>
                                         <form action="{{ route('detail-users.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus karyawan {{ $item->name }}?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-xs btn-outline-danger font-weight-bold px-2 py-0.5" style="border-radius: 0.4rem; font-size: 0.7rem;" title="Hapus Karyawan">
-                                                <i class="fas fa-trash-alt mr-1" style="font-size: 0.65rem;"></i>Hapus
+                                            <button type="submit" class="btn btn-xs btn-light text-danger border p-0 d-inline-flex align-items-center justify-content-center shadow-2xs" style="width: 28px; height: 28px; border-radius: 0.45rem; background-color: #fff1f2; border-color: #fecdd3 !important;" title="Hapus Karyawan">
+                                                <i class="fas fa-trash-alt" style="font-size: 0.65rem;"></i>
                                             </button>
                                         </form>
                                     </div>
