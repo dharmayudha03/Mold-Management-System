@@ -112,10 +112,20 @@ class MigrateFromFilament extends Command
             $bar->start();
 
             $imported = 0;
-            DB::transaction(function () use ($sourceRows, $targetTable, $bar, &$imported) {
+            $itemIndex = 1;
+            DB::transaction(function () use ($sourceRows, $targetTable, $bar, &$imported, &$itemIndex) {
                 foreach ($sourceRows as $row) {
                     $data = (array) $row;
                     
+                    // Abaikan no document (nodoc) lama dari Filament, gunakan format standar sistem baru kita
+                    if ($targetTable === 'form_setup_cetakans') {
+                        $recId = $data['id'] ?? $itemIndex;
+                        $data['nodoc'] = 'DOC-SETUP' . str_pad($recId, 2, '0', STR_PAD_LEFT);
+                    } elseif ($targetTable === 'form_sandblastings') {
+                        $recId = $data['id'] ?? $itemIndex;
+                        $data['nodoc'] = 'DOC-SANDBLASTING' . str_pad($recId, 2, '0', STR_PAD_LEFT);
+                    }
+
                     // Upsert or insert with exact ID preservation
                     if (isset($data['id'])) {
                         $id = $data['id'];
@@ -130,6 +140,7 @@ class MigrateFromFilament extends Command
                     }
 
                     $imported++;
+                    $itemIndex++;
                     $bar->advance();
                 }
             });
