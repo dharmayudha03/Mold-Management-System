@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        Tambah Form Setup Cetakan
+        Tambah Setup Cetakan
     </x-slot>
 
     <div class="max-w-4xl mx-auto">
