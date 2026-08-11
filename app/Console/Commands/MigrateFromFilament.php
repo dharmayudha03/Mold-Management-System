@@ -112,20 +112,29 @@ class MigrateFromFilament extends Command
             $bar->start();
 
             $imported = 0;
+            $skipped = 0;
             $itemIndex = 1;
-            DB::transaction(function () use ($sourceRows, $targetTable, $bar, &$imported, &$itemIndex) {
-                foreach ($sourceRows as $row) {
-                    $data = (array) $row;
-                    
-                    // Abaikan no document (nodoc) lama dari Filament, gunakan format standar sistem baru kita
-                    if ($targetTable === 'form_setup_cetakans') {
-                        $recId = $data['id'] ?? $itemIndex;
-                        $data['nodoc'] = 'DOC-SETUP' . str_pad($recId, 2, '0', STR_PAD_LEFT);
-                    } elseif ($targetTable === 'form_sandblastings') {
-                        $recId = $data['id'] ?? $itemIndex;
-                        $data['nodoc'] = 'DOC-SANDBLASTING' . str_pad($recId, 2, '0', STR_PAD_LEFT);
-                    }
 
+            foreach ($sourceRows as $row) {
+                $data = (array) $row;
+                
+                // Lewati data yatim piatu (orphan record) yang relasi foreign key-nya tidak ada di database target
+                if (!$this->validateForeignKeys($targetTable, $data)) {
+                    $skipped++;
+                    $bar->advance();
+                    continue;
+                }
+
+                // Abaikan no document (nodoc) lama dari Filament, gunakan format standar sistem baru kita
+                if ($targetTable === 'form_setup_cetakans') {
+                    $recId = $data['id'] ?? $itemIndex;
+                    $data['nodoc'] = 'DOC-SETUP' . str_pad($recId, 2, '0', STR_PAD_LEFT);
+                } elseif ($targetTable === 'form_sandblastings') {
+                    $recId = $data['id'] ?? $itemIndex;
+                    $data['nodoc'] = 'DOC-SANDBLASTING' . str_pad($recId, 2, '0', STR_PAD_LEFT);
+                }
+
+                try {
                     // Upsert or insert with exact ID preservation
                     if (isset($data['id'])) {
                         $id = $data['id'];
@@ -138,16 +147,22 @@ class MigrateFromFilament extends Command
                     } else {
                         DB::table($targetTable)->insert($data);
                     }
-
                     $imported++;
-                    $itemIndex++;
-                    $bar->advance();
+                } catch (\Exception $e) {
+                    $skipped++;
                 }
-            });
+
+                $itemIndex++;
+                $bar->advance();
+            }
 
             $bar->finish();
             $this->newLine();
-            $this->info("[+] BERHASIL: {$imported} record '{$label}' berhasil diimpor.");
+            if ($skipped > 0) {
+                $this->info("[+] BERHASIL: {$imported} record '{$label}' diimpor ({$skipped} data orphan dilewati).");
+            } else {
+                $this->info("[+] BERHASIL: {$imported} record '{$label}' berhasil diimpor.");
+            }
 
             // Reset PostgreSQL sequence ID after batch insert
             $this->resetPgsqlSequence($targetTable);
@@ -155,6 +170,56 @@ class MigrateFromFilament extends Command
         } catch (\Exception $e) {
             $this->error("\n[-] Gagal mengimpor {$label}: " . $e->getMessage());
         }
+    }
+
+    private function validateForeignKeys(string $targetTable, array $data): bool
+    {
+        $fkMaps = [
+            'name_mesins' => ['list_mesin_id' => 'list_mesins'],
+            'class_mesins' => ['list_mesin_id' => 'list_mesins'],
+            'set_code_items' => ['list_code_item_id' => 'list_code_items'],
+            'cav_code_items' => [
+                'list_code_item_id' => 'list_code_items',
+                'set_code_item_id' => 'set_code_items'
+            ],
+            'form_setup_cetakans' => [
+                'list_code_item_id' => 'list_code_items',
+                'set_code_item_id' => 'set_code_items',
+                'cav_code_item_id' => 'cav_code_items',
+                'list_mesin_id' => 'list_mesins',
+                'kategori_id' => 'kategoris'
+            ],
+            'form_sandblastings' => [
+                'list_code_item_id' => 'list_code_items',
+                'set_code_item_id' => 'set_code_items',
+                'cav_code_item_id' => 'cav_code_items',
+                'list_mesin_id' => 'list_mesins',
+                'kategori_id' => 'kategoris'
+            ],
+            'detail_user_form_setup_cetakan' => [
+                'form_setup_cetakan_id' => 'form_setup_cetakans',
+                'detail_user_id' => 'detail_users'
+            ],
+            'detail_user_form_sandblasting' => [
+                'form_sandblasting_id' => 'form_sandblastings',
+                'detail_user_id' => 'detail_users'
+            ],
+        ];
+
+        if (!isset($fkMaps[$targetTable])) {
+            return true;
+        }
+
+        foreach ($fkMaps[$targetTable] as $fkColumn => $parentTable) {
+            if (isset($data[$fkColumn]) && !empty($data[$fkColumn])) {
+                $exists = DB::table($parentTable)->where('id', $data[$fkColumn])->exists();
+                if (!$exists) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private function resetPgsqlSequence(string $table)
