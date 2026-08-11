@@ -152,15 +152,15 @@
                                     </span>
                                 </td>
                                 <td class="text-right pr-4">
-                                    <div class="d-flex align-items-center justify-content-end gap-1.5">
-                                        <a href="{{ route('detail-users.edit', $item->id) }}" class="btn btn-xs btn-outline-primary font-weight-bold px-2.5 py-1" style="border-radius: 0.5rem;">
-                                            <i class="fas fa-edit mr-1"></i>Edit
+                                    <div class="d-flex align-items-center justify-content-end gap-1">
+                                        <a href="{{ route('detail-users.edit', $item->id) }}" class="btn btn-xs btn-outline-primary font-weight-bold px-2 py-0.5" style="border-radius: 0.4rem; font-size: 0.7rem;" title="Edit Karyawan">
+                                            <i class="fas fa-edit mr-1" style="font-size: 0.65rem;"></i>Edit
                                         </a>
                                         <form action="{{ route('detail-users.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus karyawan {{ $item->name }}?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-xs btn-outline-danger font-weight-bold px-2.5 py-1" style="border-radius: 0.5rem;">
-                                                <i class="fas fa-trash-alt mr-1"></i>Hapus
+                                            <button type="submit" class="btn btn-xs btn-outline-danger font-weight-bold px-2 py-0.5" style="border-radius: 0.4rem; font-size: 0.7rem;" title="Hapus Karyawan">
+                                                <i class="fas fa-trash-alt mr-1" style="font-size: 0.65rem;"></i>Hapus
                                             </button>
                                         </form>
                                     </div>
