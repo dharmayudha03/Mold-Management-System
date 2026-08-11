@@ -133,7 +133,6 @@ class ListMesinSeeder extends Seeder
             array('code' => '02 MVC 20', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('code' => '02 MVC 21', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('code' => '02 MVC 22', 'created_at' => $timestamp, 'updated_at' => $timestamp),
-            array('code' => '02 MVC 22', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('code' => '02 MVC 23', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('code' => '02 MVC 24', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('code' => '02 MVC 25', 'created_at' => $timestamp, 'updated_at' => $timestamp),
