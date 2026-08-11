@@ -283,10 +283,10 @@
                     <button type="button" class="btn btn-sm btn-outline-secondary font-weight-bold px-3.5 py-2" data-bs-dismiss="modal" style="border-radius: 0.75rem;">
                         <i class="fas fa-times mr-1.5"></i> Tutup
                     </button>
-                    <a href="{{ route('reports.molds.export-csv', $queryParams) }}" class="btn btn-sm btn-success font-weight-bold px-3.5 py-2" style="background-color: #059669; border: none; border-radius: 0.75rem;">
+                    <a href="{{ route('reports.molds.export-csv', request()->query()) }}" class="btn btn-sm btn-success font-weight-bold px-3.5 py-2" style="background-color: #059669; border: none; border-radius: 0.75rem;">
                         <i class="fas fa-file-csv mr-1.5"></i> Export CSV
                     </a>
-                    <a href="{{ route('reports.molds.print-pdf', $queryParams) }}" target="_blank" class="btn btn-sm btn-warning font-weight-bold px-3.5 py-2 text-dark" style="background-color: #f59e0b; border: none; border-radius: 0.75rem; color: #1e293b !important;">
+                    <a href="{{ route('reports.molds.print-pdf', request()->query()) }}" target="_blank" class="btn btn-sm btn-warning font-weight-bold px-3.5 py-2 text-dark" style="background-color: #f59e0b; border: none; border-radius: 0.75rem; color: #1e293b !important;">
                         <i class="fas fa-print mr-1.5"></i> Print PDF
                     </a>
                 </div>
