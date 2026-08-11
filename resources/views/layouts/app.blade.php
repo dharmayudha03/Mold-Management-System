@@ -20,9 +20,8 @@
     <link rel="icon" type="image/png" href="{{ asset('images/coba.png') }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/coba.png') }}">
 
-    <!-- FontAwesome Free Local Asset & SVG Engine -->
+    <!-- FontAwesome Free Local Asset (Pure CSS Font - Fast Rendering) -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" />
-    <script src="{{ asset('vendor/fontawesome-free/js/all.min.js') }}"></script>
 
     <!-- Custom styles for SB Admin 2 (Local downloaded asset) -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
