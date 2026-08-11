@@ -64,37 +64,25 @@ class MigrateFromFilament extends Command
             } catch (\Exception $e) {}
         }
 
-        // STEP 1: MASTER DATA (Migrasikan tabel master terlebih dahulu dengan urutan dependensi yang benar)
-        $this->info("\n--- [1/2] MEMINDAHKAN MASTER DATA ---");
-        $this->migrateTable($sourceConnection, 'kategoris', 'kategoris', 'Master Kategori');
+        // STEP 1: MASTER DATA (List Code Item, Set Code Item, Cav Code Item, List Mesin, Name Mesin, Class Mesin)
+        $this->info("\n--- [1/2] MEMINDAHKAN MASTER DATA (CODE ITEM & MESIN) ---");
         $this->migrateTable($sourceConnection, 'list_code_items', 'list_code_items', 'Master List Code Item');
         $this->migrateTable($sourceConnection, 'set_code_items', 'set_code_items', 'Master Set Code Item');
         $this->migrateTable($sourceConnection, 'cav_code_items', 'cav_code_items', 'Master Cavity Code Item');
         
-        // Parent Mesin (list_mesins) HARUS diimpor duluan sebelum child (name_mesins & class_mesins)!
+        // Parent Mesin (list_mesins) & Child (name_mesins, class_mesins)
         $this->migrateTable($sourceConnection, 'list_mesins', 'list_mesins', 'Master List Mesin');
         $this->migrateTable($sourceConnection, 'name_mesins', 'name_mesins', 'Master Nama Mesin');
         $this->migrateTable($sourceConnection, 'class_mesins', 'class_mesins', 'Master Class Mesin');
-        
-        $this->migrateTable($sourceConnection, 'list_raks', 'list_raks', 'Master List Rak');
-        $this->migrateTable($sourceConnection, 'list_no_raks', 'list_no_raks', 'Master List No Rak');
-        $this->migrateTable($sourceConnection, 'penomoran_raks', 'penomoran_raks', 'Master Penomoran Rak');
-        $this->migrateTable($sourceConnection, 'detail_users', 'detail_users', 'Master Karyawan PIC');
 
-        // STEP 2: TRANSAKSI & FORM REPORT DATA (Migrasikan data formulir)
-        $this->info("\n--- [2/2] MEMINDAHKAN DATA TRANSAKSI & FORMULIR ---");
-        $this->migrateTable($sourceConnection, 'form_schedules', 'form_schedules', 'Form Schedule');
+        // STEP 2: FORM SETUP CETAKAN & FORM SANDBLASTING
+        $this->info("\n--- [2/2] MEMINDAHKAN FORM SETUP CETAKAN & FORM SANDBLASTING ---");
         $this->migrateTable($sourceConnection, 'form_setup_cetakans', 'form_setup_cetakans', 'Form Setup Cetakan');
         $this->migrateTable($sourceConnection, 'form_sandblastings', 'form_sandblastings', 'Form Sandblasting');
         
         // PIVOT RELASI PIC KARYAWAN (Detail User Forms)
         $this->migrateTable($sourceConnection, 'detail_user_form_setup_cetakan', 'detail_user_form_setup_cetakan', 'Relasi PIC Form Setup Cetakan');
         $this->migrateTable($sourceConnection, 'detail_user_form_sandblasting', 'detail_user_form_sandblasting', 'Relasi PIC Form Sandblasting');
-
-        $this->migrateTable($sourceConnection, 'form_repair_cetakans', 'form_repair_cetakans', 'Form Repair Cetakan (PEJO)');
-        $this->migrateTable($sourceConnection, 'form_mjos', 'form_mjos', 'Form MJO');
-        $this->migrateTable($sourceConnection, 'cetakan_naiks', 'cetakan_naiks', 'Cetakan Naik');
-        $this->migrateTable($sourceConnection, 'history_cetakans', 'history_cetakans', 'History Cetakan');
 
         $this->newLine();
         $this->info("=================================================");
