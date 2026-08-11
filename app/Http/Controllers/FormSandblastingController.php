@@ -255,10 +255,11 @@ class FormSandblastingController extends Controller
 
         $roles = $this->getFilteredRoles();
         $detailUsers = $this->getFilteredDetailUsers();
-        $listCodeItems = ListCodeItem::all();
         $setCodeItems = collect();
         $cavCodeItems = collect();
-        $listMesins = ListMesin::all();
+        $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')->pluck('list_mesin_id')->toArray();
+        // Mesin yang sedang proses (terpakai cetakan naik) TIDAK MUNCUL di pilihan dropdown
+        $listMesins = ListMesin::whereNotIn('id', $occupiedMesinIds)->get();
         $kategoris = $this->getFilteredKategoris();
         $formSchedules = FormSchedule::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])
             ->where(function ($q) {
@@ -373,9 +374,11 @@ class FormSandblastingController extends Controller
         $setCodeItems = SetCodeItem::where('list_code_item_id', $formSandblasting->list_code_item_id)->get();
         $cavCodeItems = CavCodeItem::where('list_code_item_id', $formSandblasting->list_code_item_id)
             ->where('set_code_item_id', $formSandblasting->set_code_item_id)->get();
-        $listMesins = ListMesin::all();
         $kategoris = $this->getFilteredKategoris();
-        $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')->pluck('list_mesin_id')->toArray();
+        $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')
+            ->where('list_mesin_id', '!=', $formSandblasting->list_mesin_id)
+            ->pluck('list_mesin_id')->toArray();
+        $listMesins = ListMesin::whereNotIn('id', $occupiedMesinIds)->get();
         $rackData = $this->getAvailableRackData($formSandblasting->id);
         $operationalDate = $this->getFactoryOperationalDate();
         $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
