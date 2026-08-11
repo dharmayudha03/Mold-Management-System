@@ -130,16 +130,30 @@
                 const endEl = document.getElementById('setup_end_code_item_id');
                 if (startEl && !startEl.tomselect) {
                     new TomSelect(startEl, {
+                        plugins: {
+                            'dropdown_input': {},
+                            'clear_button': { title: 'Hapus pilihan' }
+                        },
+                        allowEmptyOption: true,
                         create: false,
+                        maxItems: 1,
+                        closeAfterSelect: true,
                         placeholder: "-- Semua Code Item --",
-                        allowEmptyOption: true
+                        sortField: []
                     });
                 }
                 if (endEl && !endEl.tomselect) {
                     new TomSelect(endEl, {
+                        plugins: {
+                            'dropdown_input': {},
+                            'clear_button': { title: 'Hapus pilihan' }
+                        },
+                        allowEmptyOption: true,
                         create: false,
+                        maxItems: 1,
+                        closeAfterSelect: true,
                         placeholder: "-- Semua Code Item --",
-                        allowEmptyOption: true
+                        sortField: []
                     });
                 }
             }

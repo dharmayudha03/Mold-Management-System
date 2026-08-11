@@ -54,8 +54,8 @@
                     <!-- Code Item Range: Start -->
                     <div class="col-md-3 mb-3">
                         <label class="form-label text-xs font-weight-bold text-gray-700 mb-1">Dari Code Item</label>
-                        <select name="start_code_item_id" class="form-select text-xs">
-                            <option value="">-- Pilih Code Item Awal --</option>
+                        <select name="start_code_item_id" id="report_start_code_item_id" class="form-select text-xs">
+                            <option value="">-- Semua Code Item --</option>
                             @foreach($allCodeItems as $item)
                                 <option value="{{ $item->id }}" {{ $startCodeId == $item->id ? 'selected' : '' }}>
                                     {{ $item->name }}
@@ -67,8 +67,8 @@
                     <!-- Code Item Range: End -->
                     <div class="col-md-3 mb-3">
                         <label class="form-label text-xs font-weight-bold text-gray-700 mb-1">Sampai Code Item</label>
-                        <select name="end_code_item_id" class="form-select text-xs">
-                            <option value="">-- Pilih Code Item Akhir --</option>
+                        <select name="end_code_item_id" id="report_end_code_item_id" class="form-select text-xs">
+                            <option value="">-- Semua Code Item --</option>
                             @foreach($allCodeItems as $item)
                                 <option value="{{ $item->id }}" {{ $endCodeId == $item->id ? 'selected' : '' }}>
                                     {{ $item->name }}
@@ -414,6 +414,39 @@
                         });
                 });
             });
+
+            if (typeof TomSelect !== 'undefined') {
+                const sEl = document.getElementById('report_start_code_item_id');
+                const eEl = document.getElementById('report_end_code_item_id');
+                if (sEl && !sEl.tomselect) {
+                    new TomSelect(sEl, {
+                        plugins: {
+                            'dropdown_input': {},
+                            'clear_button': { title: 'Hapus pilihan' }
+                        },
+                        allowEmptyOption: true,
+                        create: false,
+                        maxItems: 1,
+                        closeAfterSelect: true,
+                        placeholder: "-- Semua Code Item --",
+                        sortField: []
+                    });
+                }
+                if (eEl && !eEl.tomselect) {
+                    new TomSelect(eEl, {
+                        plugins: {
+                            'dropdown_input': {},
+                            'clear_button': { title: 'Hapus pilihan' }
+                        },
+                        allowEmptyOption: true,
+                        create: false,
+                        maxItems: 1,
+                        closeAfterSelect: true,
+                        placeholder: "-- Semua Code Item --",
+                        sortField: []
+                    });
+                }
+            }
         });
     </script>
 </x-app-layout>
