@@ -27,7 +27,12 @@
                         </div>
                         <div class="form-group-item">
                             <label class="form-label">Tanggal <span class="text-danger">*</span></label>
-                            <input type="date" name="tanggal" value="{{ $selectedSchedule ? $selectedSchedule->tanggal : date('Y-m-d') }}" required class="form-control">
+                            <input type="date" name="tanggal" value="{{ $selectedSchedule ? $selectedSchedule->tanggal : ($operationalDate ?? date('Y-m-d')) }}" required 
+                                class="form-control {{ !empty($isReadonlyDate) ? 'bg-light font-weight-bold' : '' }}"
+                                {{ !empty($isReadonlyDate) ? 'readonly' : '' }}>
+                            @if(!empty($isReadonlyDate))
+                                <small class="text-xs text-muted mt-1 d-block"><i class="fas fa-lock text-primary mr-1"></i> Tanggal otomatis disesuaikan dengan tanggal operasional shift pabrik.</small>
+                            @endif
                         </div>
                         <div class="form-group-item">
                             <label class="form-label text-purple-700 font-weight-bold"><i class="fas fa-calendar-alt mr-1"></i> Mengacu Ref. Schedule (Opsional)</label>

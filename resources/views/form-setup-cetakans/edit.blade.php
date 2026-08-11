@@ -28,7 +28,12 @@
                         </div>
                         <div class="form-group-item">
                             <label class="form-label">Tanggal <span class="text-danger">*</span></label>
-                            <input type="date" name="tanggal" value="{{ old('tanggal', $formSetupCetakan->tanggal) }}" required class="form-control">
+                            <input type="date" name="tanggal" value="{{ old('tanggal', $formSetupCetakan->tanggal) }}" required 
+                                class="form-control {{ !empty($isReadonlyDate) ? 'bg-light font-weight-bold' : '' }}"
+                                {{ !empty($isReadonlyDate) ? 'readonly' : '' }}>
+                            @if(!empty($isReadonlyDate))
+                                <small class="text-xs text-muted mt-1 d-block"><i class="fas fa-lock text-primary mr-1"></i> Tanggal otomatis disesuaikan dengan tanggal operasional shift pabrik.</small>
+                            @endif
                         </div>
                     </div>
 

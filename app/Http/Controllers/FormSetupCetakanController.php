@@ -199,9 +199,20 @@ class FormSetupCetakanController extends Controller
         return Kategori::all();
     }
 
+    private function getFactoryOperationalDate()
+    {
+        $now = \Carbon\Carbon::now();
+        // Operasional pabrik 3 Shift (Shift 3 cutoff jam 08:00 Pagi)
+        if ($now->hour < 8) {
+            return $now->subDay()->format('Y-m-d');
+        }
+        return $now->format('Y-m-d');
+    }
+
     public function create(Request $request)
     {
-        if (auth()->user() && auth()->user()->hasRole('User')) {
+        $user = auth()->user();
+        if ($user && $user->hasRole('User')) {
             return redirect()->route('form-setup-cetakans.index')->with('error', 'Role User hanya memiliki hak akses untuk melihat dan mendownload laporan!');
         }
 
@@ -243,15 +254,22 @@ class FormSetupCetakanController extends Controller
         // Ambil shift dari request (dikirim via URL dari index form schedule)
         $prefilledShift = $request->input('shift', $selectedSchedule->shift ?? null);
 
+        $operationalDate = $this->getFactoryOperationalDate();
+        $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
+
         return view('form-setup-cetakans.create', compact(
             'roles', 'detailUsers', 'listCodeItems', 'setCodeItems',
             'cavCodeItems', 'listMesins', 'occupiedMesinIds', 'kategoris', 'nodoc',
-            'formSchedules', 'selectedSchedule', 'prefilledShift'
+            'formSchedules', 'selectedSchedule', 'prefilledShift',
+            'operationalDate', 'isReadonlyDate'
         ));
     }
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
+
         $validated = $request->validate([
             'role_id' => 'nullable|exists:roles,id',
             'detail_user_id' => 'required|array',
@@ -276,6 +294,10 @@ class FormSetupCetakanController extends Controller
             'pl' => 'required|string',
             'form_schedule_id' => 'nullable|exists:form_schedules,id',
         ]);
+
+        if ($isReadonlyDate) {
+            $validated['tanggal'] = $this->getFactoryOperationalDate();
+        }
 
         $detailUserIds = $validated['detail_user_id'];
         unset($validated['detail_user_id']);
@@ -310,12 +332,13 @@ class FormSetupCetakanController extends Controller
             ? ListMesin::whereIn('id', $activeListMesinIds)->get()
             : ListMesin::all();
 
-        $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')->pluck('list_mesin_id')->toArray();
-        $kategoris = $this->getFilteredKategoris();
+        $operationalDate = $this->getFactoryOperationalDate();
+        $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
 
         return view('form-setup-cetakans.edit', compact(
             'formSetupCetakan', 'roles', 'detailUsers', 'listCodeItems',
-            'setCodeItems', 'cavCodeItems', 'listMesins', 'occupiedMesinIds', 'kategoris'
+            'setCodeItems', 'cavCodeItems', 'listMesins', 'occupiedMesinIds', 'kategoris',
+            'operationalDate', 'isReadonlyDate'
         ));
     }
 

@@ -236,9 +236,20 @@ class FormSandblastingController extends Controller
         return $rackData;
     }
 
+    private function getFactoryOperationalDate()
+    {
+        $now = \Carbon\Carbon::now();
+        // Operasional pabrik 3 Shift (Shift 3 cutoff jam 08:00 Pagi)
+        if ($now->hour < 8) {
+            return $now->subDay()->format('Y-m-d');
+        }
+        return $now->format('Y-m-d');
+    }
+
     public function create(Request $request)
     {
-        if (auth()->user() && auth()->user()->hasRole('User')) {
+        $user = auth()->user();
+        if ($user && $user->hasRole('User')) {
             return redirect()->route('form-sandblastings.index')->with('error', 'Role User hanya memiliki hak akses untuk melihat dan mendownload laporan!');
         }
 
@@ -277,15 +288,22 @@ class FormSandblastingController extends Controller
         // Ambil shift dari request (dikirim via URL dari index form schedule)
         $prefilledShift = $request->input('shift', $selectedSchedule->shift ?? null);
 
+        $operationalDate = $this->getFactoryOperationalDate();
+        $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
+
         return view('form-sandblastings.create', compact(
             'roles', 'detailUsers', 'listCodeItems', 'setCodeItems',
             'cavCodeItems', 'listMesins', 'occupiedMesinIds', 'kategoris', 'nodoc',
-            'formSchedules', 'selectedSchedule', 'rackData', 'prefilledShift'
+            'formSchedules', 'selectedSchedule', 'rackData', 'prefilledShift',
+            'operationalDate', 'isReadonlyDate'
         ));
     }
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
+
         $validated = $request->validate([
             'form_schedule_id' => 'nullable|exists:form_schedules,id',
             'role_id' => 'nullable|exists:roles,id',
@@ -308,6 +326,10 @@ class FormSandblastingController extends Controller
             'gerinda' => 'required|string',
             'oiling' => 'required|string',
         ]);
+
+        if ($isReadonlyDate) {
+            $validated['tanggal'] = $this->getFactoryOperationalDate();
+        }
 
         $detailUserIds = $validated['detail_user_id'];
         unset($validated['detail_user_id']);
@@ -353,23 +375,27 @@ class FormSandblastingController extends Controller
             ->where('set_code_item_id', $formSandblasting->set_code_item_id)->get();
         $listMesins = ListMesin::all();
         $kategoris = $this->getFilteredKategoris();
-
         $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')->pluck('list_mesin_id')->toArray();
         $rackData = $this->getAvailableRackData($formSandblasting->id);
+        $operationalDate = $this->getFactoryOperationalDate();
+        $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
 
         return view('form-sandblastings.edit', compact(
             'formSandblasting', 'roles', 'detailUsers', 'listCodeItems',
             'setCodeItems', 'cavCodeItems', 'listMesins', 'occupiedMesinIds', 'kategoris',
-            'rackData'
+            'rackData', 'operationalDate', 'isReadonlyDate'
         ));
     }
 
     public function update(Request $request, FormSandblasting $formSandblasting)
     {
         $user = auth()->user();
+        $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
+
         if ($user && $user->hasRole('Setup & Maintenance') && !$user->hasRole('super_admin')) {
             return redirect()->route('form-sandblastings.index')->with('error', 'Role Setup & Maintenance tidak diizinkan untuk mengedit data!');
         }
+
         $validated = $request->validate([
             'role_id' => 'nullable|exists:roles,id',
             'detail_user_id' => 'required|array',
@@ -391,6 +417,10 @@ class FormSandblastingController extends Controller
             'gerinda' => 'required|string',
             'oiling' => 'required|string',
         ]);
+
+        if ($isReadonlyDate) {
+            $validated['tanggal'] = $this->getFactoryOperationalDate();
+        }
 
         $detailUserIds = $validated['detail_user_id'];
         unset($validated['detail_user_id']);
