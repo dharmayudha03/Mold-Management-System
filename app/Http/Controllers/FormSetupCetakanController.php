@@ -223,8 +223,7 @@ class FormSetupCetakanController extends Controller
         $cavCodeItems = collect();
 
         $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')->pluck('list_mesin_id')->toArray();
-        // Mesin yang sedang proses (terpakai cetakan naik) TIDAK MUNCUL di pilihan dropdown
-        $listMesins = ListMesin::whereNotIn('id', $occupiedMesinIds)->get();
+        $listMesins = ListMesin::all();
         $kategoris = $this->getFilteredKategoris();
         $formSchedules = FormSchedule::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])
             ->where(function ($q) {
@@ -324,10 +323,8 @@ class FormSetupCetakanController extends Controller
         $cavCodeItems = CavCodeItem::where('list_code_item_id', $formSetupCetakan->list_code_item_id)
             ->where('set_code_item_id', $formSetupCetakan->set_code_item_id)->get();
         
-        $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')
-            ->where('list_mesin_id', '!=', $formSetupCetakan->list_mesin_id)
-            ->pluck('list_mesin_id')->toArray();
-        $listMesins = ListMesin::whereNotIn('id', $occupiedMesinIds)->get();
+        $occupiedMesinIds = CetakanNaik::whereNotNull('list_code_item_id')->pluck('list_mesin_id')->toArray();
+        $listMesins = ListMesin::all();
 
         $operationalDate = $this->getFactoryOperationalDate();
         $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');

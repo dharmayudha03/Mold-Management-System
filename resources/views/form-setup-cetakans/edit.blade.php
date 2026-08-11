@@ -440,6 +440,47 @@
                     updateCavs(listId, setId);
                 });
             }
+
+            // 3. Filter Mesin Berdasarkan Kategori (Setup Naik vs Setup Turun)
+            const kategoriEl = document.getElementById('kategori_id');
+            const mesinEl = document.getElementById('list_mesin_id');
+
+            function filterMesinByKategori() {
+                if (!kategoriEl || !mesinEl) return;
+                const selectedOpt = kategoriEl.options[kategoriEl.selectedIndex];
+                const kategoriText = selectedOpt ? selectedOpt.text.toUpperCase() : '';
+
+                const isSetupNaik = kategoriText.includes('NAIK');
+
+                Array.from(mesinEl.options).forEach(opt => {
+                    if (!opt.value) return;
+                    const isOccupied = opt.getAttribute('data-occupied') === '1';
+
+                    if (isSetupNaik) {
+                        // Jika Setup Cetakan Naik: Mesin yang sedang produksi HIDDEN
+                        if (isOccupied) {
+                            opt.style.display = 'none';
+                            opt.disabled = true;
+                        } else {
+                            opt.style.display = '';
+                            opt.disabled = false;
+                        }
+                    } else {
+                        // Jika Setup Cetakan Turun / Lainnya: Semua Mesin TAMPIL (termasuk yang sedang produksi)
+                        opt.style.display = '';
+                        opt.disabled = false;
+                    }
+                });
+
+                if (mesinEl.selectedOptions[0] && mesinEl.selectedOptions[0].disabled) {
+                    mesinEl.value = '';
+                }
+            }
+
+            if (kategoriEl) {
+                kategoriEl.addEventListener('change', filterMesinByKategori);
+                filterMesinByKategori();
+            }
         });
     </script>
 </x-app-layout>
