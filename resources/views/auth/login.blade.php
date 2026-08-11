@@ -284,7 +284,7 @@
                                     <i class="fas fa-lock input-icon"></i>
                                     <input type="password" id="password" name="password" required autocomplete="current-password"
                                         class="form-control custom-input @error('password') is-invalid @enderror"
-                                        placeholder="••••••••" style="padding-right: 3rem !important;">
+                                        placeholder="Masukkan Password Anda" style="padding-right: 3rem !important;">
                                     <button type="button" id="togglePasswordBtn" class="toggle-password-btn" title="Lihat/Sembunyikan Password">
                                         <i class="fas fa-eye" id="togglePasswordIcon"></i>
                                     </button>
