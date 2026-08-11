@@ -64,7 +64,7 @@
                             <select name="role_id" id="role_id" required class="form-select">
                                 <option value="">-- Pilih Group Role --</option>
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                    <option value="{{ $role->id }}" {{ (count($roles) == 1 || old('role_id') == $role->id || ($selectedSchedule && isset($selectedSchedule->role_id) && $selectedSchedule->role_id == $role->id)) ? 'selected' : '' }}>{{ $role->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -211,161 +211,12 @@
                 @endforeach
             ];
 
-            // TomSelect for Role, Code Item & Mesin
-            if (window.TomSelect) {
-                if (roleSelect && !roleSelect.tomselect) {
-                    new TomSelect(roleSelect, {
-                        plugins: ['dropdown_input'],
-                        create: false,
-                        maxItems: 1,
-                        closeAfterSelect: true,
-                        placeholder: '-- Pilih Group Role --',
-                        onChange: function (val) {
-                            loadRoleUsers(val);
-                        }
-                    });
-                }
-                if (codeItemEl && !codeItemEl.tomselect) {
-                    new TomSelect(codeItemEl, { 
-                        plugins: {
-                            'dropdown_input': {},
-                            'clear_button': { title: 'Hapus pilihan' }
-                        },
-                        allowEmptyOption: true,
-                        create: false, 
-                        maxItems: 1, 
-                        closeAfterSelect: true, 
-                        placeholder: '-- Pilih / Ketik Code Item --',
-                        sortField: [],
-                        render: {
-                            no_results: function(data, escape) {
-                                return '<div class="no-results p-2 text-xs text-gray-500 font-weight-bold">Code item yang dicari tidak ada</div>';
-                            }
-                        },
-                        onChange: function(val) {
-                            updateSets(val).then(() => {
-                                updateCavs(val, setEl ? setEl.value : '');
-                            });
-                        }
-                    });
-                }
-                if (mesinEl && !mesinEl.tomselect) {
-                    new TomSelect(mesinEl, { 
-                        plugins: {
-                            'dropdown_input': {},
-                            'clear_button': { title: 'Hapus pilihan' }
-                        },
-                        allowEmptyOption: true,
-                        create: false, 
-                        maxItems: 1, 
-                        closeAfterSelect: true, 
-                        placeholder: '-- Pilih / Ketik Mesin --',
-                        sortField: [],
-                        render: {
-                            no_results: function(data, escape) {
-                                return '<div class="no-results p-2 text-xs text-gray-500 font-weight-bold">Mesin yang anda cari tidak ada</div>';
-                            }
-                        }
-                    });
-                }
-            }
-
-            function updateMesinFilter() {
-                if (!katSelect || !mesinEl) return;
-
-                const selectedOpt = katSelect.options[katSelect.selectedIndex];
-                const selectedText = selectedOpt ? selectedOpt.text.toUpperCase() : '';
-                const isNaik = selectedText.includes('NAIK');
-
-                const validMesins = rawMesins.filter(m => {
-                    if (isNaik && m.isOccupied) {
-                        return false;
-                    }
-                    return true;
-                });
-
-                const ts = mesinEl.tomselect;
-                const currentVal = ts ? ts.getValue() : mesinEl.value;
-
-                if (ts) {
-                    ts.clearOptions();
-                    ts.addOption({ value: '', text: '-- Pilih Mesin --' });
-                    validMesins.forEach(m => {
-                        ts.addOption({
-                            value: m.id,
-                            text: m.code + (m.isOccupied ? ' (Sedang Produksi)' : '')
-                        });
-                    });
-                    ts.refreshOptions(false);
-
-                    if (currentVal && validMesins.some(m => m.id == currentVal)) {
-                        ts.setValue(currentVal, true);
-                    } else {
-                        ts.clear();
-                    }
-                } else {
-                    mesinEl.innerHTML = '<option value="">-- Pilih Mesin --</option>';
-                    validMesins.forEach(m => {
-                        const opt = document.createElement('option');
-                        opt.value = m.id;
-                        opt.textContent = m.code + (m.isOccupied ? ' (Sedang Produksi)' : '');
-                        if (currentVal && m.id == currentVal) opt.selected = true;
-                        mesinEl.appendChild(opt);
-                    });
-                }
-            }
-
-            if (katSelect) {
-                katSelect.addEventListener('change', updateMesinFilter);
-            }
-            updateMesinFilter();
-
-            if (scheduleSelect) {
-                scheduleSelect.addEventListener('change', function () {
-                    const opt = this.options[this.selectedIndex];
-                    if (!opt || !opt.value) return;
-
-                    const codeItemVal = opt.getAttribute('data-codeitem');
-                    const setVal = opt.getAttribute('data-set');
-                    const cavVal = opt.getAttribute('data-cav');
-                    const mesinVal = opt.getAttribute('data-mesin');
-                    const katVal = opt.getAttribute('data-kategori');
-                    const tglVal = opt.getAttribute('data-tanggal');
-
-                    if (tglVal) {
-                        const tglInput = document.querySelector('input[name="tanggal"]');
-                        if (tglInput) tglInput.value = tglVal;
-                    }
-                    if (katVal) {
-                        const katSelect = document.getElementById('kategori_id');
-                        if (katSelect) {
-                            katSelect.value = katVal;
-                            updateMesinFilter();
-                        }
-                    }
-                    if (mesinVal && mesinEl) {
-                        mesinEl.value = mesinVal;
-                        if (mesinEl.tomselect) mesinEl.tomselect.setValue(mesinVal);
-                    }
-                    if (codeItemVal && codeItemEl) {
-                        if (codeItemEl.tomselect) {
-                            codeItemEl.tomselect.setValue(codeItemVal);
-                        } else {
-                            codeItemEl.value = codeItemVal;
-                        }
-                        updateSets(codeItemVal, setVal).then(() => {
-                            updateCavs(codeItemVal, setVal, cavVal);
-                        });
-                    }
-                });
-            }
-
             // 1. Filter Karyawan by Group Role (Instant 0ms In-Memory Filter)
             const allDetailUsers = @json($detailUsers ?? []);
 
             function loadRoleUsers(roleIdVal) {
                 if (!roleSelect || !detailUserContainer) return;
-                const roleId = (roleIdVal !== undefined && roleIdVal !== null) ? roleIdVal : roleSelect.value;
+                const roleId = (roleIdVal !== undefined && roleIdVal !== null && roleIdVal !== '') ? roleIdVal : roleSelect.value;
                 detailUserContainer.innerHTML = '';
                 if (!roleId) {
                     detailUserContainer.innerHTML = '<p class="text-xs text-gray-500 italic mb-0">Pilih Group Role terlebih dahulu untuk memilih nama karyawan.</p>';
@@ -406,12 +257,72 @@
                 }
             }
 
+            // TomSelect for Role, Code Item & Mesin
+            if (window.TomSelect) {
+                if (roleSelect && !roleSelect.tomselect) {
+                    new TomSelect(roleSelect, {
+                        plugins: ['dropdown_input'],
+                        create: false,
+                        maxItems: 1,
+                        closeAfterSelect: true,
+                        placeholder: '-- Pilih Group Role --',
+                        onChange: function (val) {
+                            loadRoleUsers(val);
+                        }
+                    });
+                }
+                if (codeItemEl && !codeItemEl.tomselect) {
+                    new TomSelect(codeItemEl, { 
+                        plugins: {
+                            'dropdown_input': {},
+                            'clear_button': { title: 'Hapus pilihan' }
+                        },
+                        allowEmptyOption: true,
+                        create: false, 
+                        maxItems: 1, 
+                        closeAfterSelect: true, 
+                        placeholder: '-- Pilih / Ketik Code Item --',
+                        sortField: { field: '$order' },
+                        render: {
+                            no_results: function(data, escape) {
+                                return '<div class="no-results p-2 text-xs text-gray-500 font-weight-bold">Code item yang dicari tidak ada</div>';
+                            }
+                        },
+                        onChange: function(val) {
+                            updateSets(val).then(() => {
+                                updateCavs(val, setEl ? setEl.value : '');
+                            });
+                        }
+                    });
+                }
+                if (mesinEl && !mesinEl.tomselect) {
+                    new TomSelect(mesinEl, { 
+                        plugins: {
+                            'dropdown_input': {},
+                            'clear_button': { title: 'Hapus pilihan' }
+                        },
+                        allowEmptyOption: true,
+                        create: false, 
+                        maxItems: 1, 
+                        closeAfterSelect: true, 
+                        placeholder: '-- Pilih / Ketik Mesin --',
+                        sortField: [],
+                        render: {
+                            no_results: function(data, escape) {
+                                return '<div class="no-results p-2 text-xs text-gray-500 font-weight-bold">Mesin yang anda cari tidak ada</div>';
+                            }
+                        }
+                    });
+                }
+            }
+
             if (roleSelect && detailUserContainer) {
                 roleSelect.addEventListener('change', function() {
                     loadRoleUsers(this.value);
                 });
-                if (roleSelect.value) {
-                    loadRoleUsers(roleSelect.value);
+                const curRoleId = roleSelect.value || (roleSelect.tomselect ? roleSelect.tomselect.getValue() : '');
+                if (curRoleId) {
+                    loadRoleUsers(curRoleId);
                 }
             }
 
