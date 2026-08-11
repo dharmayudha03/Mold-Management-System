@@ -49,7 +49,7 @@
                             <select name="role_id" id="role_id" required class="form-select">
                                 <option value="">-- Pilih Group Role --</option>
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ ($formSetupCetakan->role_id == $role->id || count($roles) == 1) ? 'selected' : '' }}>{{ $role->name }}</option>
+                                    <option value="{{ $role->id }}" {{ $formSetupCetakan->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                                 @endforeach
                             </select>
                         </div>

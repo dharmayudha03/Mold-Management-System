@@ -64,7 +64,7 @@
                             <select name="role_id" id="role_id" required class="form-select">
                                 <option value="">-- Pilih Group Role --</option>
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ (count($roles) == 1 || old('role_id') == $role->id || ($selectedSchedule && isset($selectedSchedule->role_id) && $selectedSchedule->role_id == $role->id)) ? 'selected' : '' }}>{{ $role->name }}</option>
+                                    <option value="{{ $role->id }}" {{ (old('role_id') == $role->id || ($selectedSchedule && isset($selectedSchedule->role_id) && $selectedSchedule->role_id == $role->id)) ? 'selected' : '' }}>{{ $role->name }}</option>
                                 @endforeach
                             </select>
                         </div>
