@@ -25,7 +25,7 @@
 
                 <!-- Action Buttons -->
                 <div class="d-flex align-items-center gap-2 shrink-0">
-                    @if($canDownload)
+                    @if($canDownload ?? (auth()->user() && (auth()->user()->hasRole('User') || auth()->user()->hasRole('super_admin'))))
                     <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold px-3 py-2" data-bs-toggle="modal" data-bs-target="#exportFilterModalReport" data-toggle="modal" data-target="#exportFilterModalReport" onclick="openReportExportModal()" style="border-radius: 0.75rem;">
                         <i class="fas fa-download mr-1.5"></i> Download Laporan
                     </button>
