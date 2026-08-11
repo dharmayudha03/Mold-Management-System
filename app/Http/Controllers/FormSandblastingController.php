@@ -46,7 +46,7 @@ class FormSandblastingController extends Controller
 
     public function exportCsv(Request $request)
     {
-        $fileName = 'Form_Sandblasting_' . date('Ymd_His') . '.csv';
+        $fileName = 'Laporan_Form_Sandblasting_' . date('Ymd_His') . '.csv';
 
         $query = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser']);
 
@@ -71,34 +71,56 @@ class FormSandblastingController extends Controller
             $query->where('list_code_item_id', $request->input('code_item_id'));
         }
 
-        $items = $query->latest('tanggal')->get();
+        $items = $query->orderBy('tanggal', 'desc')->get();
 
         $response = new StreamedResponse(function () use ($items) {
             $handle = fopen('php://output', 'w');
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
 
             fputcsv($handle, [
-                'NO DOC', 'TANGGAL', 'KATEGORI', 'CODE ITEM', 'MOLD SET', 'MOLD CAVITY', 'MESIN', 'SHIFT', 'SANDBLASTING', 'CUCI', 'AUTOSOL', 'GERINDA/KIKIR', 'OILING', 'CAV NG', 'PIC KARYAWAN'
+                'Tanggal',
+                'Kategori',
+                'Shift',
+                'Nama Karyawan',
+                'Code Item',
+                'Mold Set',
+                'Mold Cav',
+                'No Mesin',
+                'RAK',
+                'No RAK',
+                'Cav NG',
+                'Sandblasting',
+                'Cuci',
+                'Autosol',
+                'Gerinda',
+                'Oiling'
             ]);
 
+            $formatCheck = function($val) {
+                if (empty($val) || $val === '-' || strtoupper($val) === 'NG' || $val === '0') {
+                    return '-';
+                }
+                return '√';
+            };
+
             foreach ($items as $item) {
-                $pics = $item->detailUser->pluck('name')->implode(', ');
                 fputcsv($handle, [
-                    $item->nodoc,
-                    $item->tanggal,
-                    $item->kategori->name ?? '-',
+                    \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y'),
+                    strtoupper($item->kategori->name ?? '-'),
+                    $item->shift,
+                    $item->detailUser->pluck('name')->implode(', ') ?: '-',
                     $item->listCodeItem->name ?? '-',
                     $item->setCodeItem->moldset ?? '-',
                     $item->cavCodeItem->moldcav ?? '-',
                     $item->listMesin->code ?? '-',
-                    $item->shift,
-                    $item->sandblasting ?? '-',
-                    $item->cuci ?? '-',
-                    $item->autosol ?? '-',
-                    $item->gerinda ?? '-',
-                    $item->oiling ?? '-',
+                    $item->rak ?? '-',
+                    $item->norak ?? '-',
                     $item->cav_ng ?? 0,
-                    $pics ?: '-'
+                    $formatCheck($item->sandblasting),
+                    $formatCheck($item->cuci),
+                    $formatCheck($item->autosol),
+                    $formatCheck($item->gerinda),
+                    $formatCheck($item->oiling)
                 ]);
             }
 

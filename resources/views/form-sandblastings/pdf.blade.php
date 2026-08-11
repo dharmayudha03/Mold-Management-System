@@ -37,41 +37,51 @@
     <table>
         <thead>
             <tr>
-                <th>NO DOC</th>
-                <th>TANGGAL</th>
-                <th>KATEGORI</th>
-                <th>CODE ITEM</th>
-                <th>MOLD SET</th>
-                <th>MOLD CAVITY</th>
-                <th>MESIN</th>
-                <th>SHIFT</th>
-                <th class="text-center">SANDBLASTING</th>
-                <th class="text-center">CUCI</th>
-                <th class="text-center">AUTOSOL</th>
-                <th class="text-center">GERINDA</th>
-                <th class="text-center">OILING</th>
-                <th class="text-center">CAV NG</th>
-                <th>PIC KARYAWAN</th>
+                <th class="text-center">Tanggal</th>
+                <th>Kategori</th>
+                <th class="text-center">Shift</th>
+                <th>Nama Karyawan</th>
+                <th class="text-center">Code Item</th>
+                <th class="text-center">Mold Set</th>
+                <th class="text-center">Mold Cav</th>
+                <th class="text-center">No Mesin</th>
+                <th class="text-center">RAK</th>
+                <th class="text-center">No RAK</th>
+                <th class="text-center">Cav NG</th>
+                <th class="text-center">Sandblasting</th>
+                <th class="text-center">Cuci</th>
+                <th class="text-center">Autosol</th>
+                <th class="text-center">Gerinda</th>
+                <th class="text-center">Oiling</th>
             </tr>
         </thead>
         <tbody>
             @foreach($items as $item)
+                @php
+                    $formatCheck = function($val) {
+                        if (empty($val) || $val === '-' || strtoupper($val) === 'NG' || $val === '0') {
+                            return '-';
+                        }
+                        return '√';
+                    };
+                @endphp
                 <tr>
-                    <td><strong>{{ $item->nodoc }}</strong></td>
-                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
-                    <td>{{ $item->kategori->name ?? '-' }}</td>
-                    <td><strong>{{ $item->listCodeItem->name ?? '-' }}</strong></td>
-                    <td>{{ $item->setCodeItem->moldset ?? '-' }}</td>
-                    <td>{{ $item->cavCodeItem->moldcav ?? '-' }}</td>
-                    <td>{{ $item->listMesin->code ?? '-' }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
+                    <td>{{ strtoupper($item->kategori->name ?? '-') }}</td>
                     <td class="text-center">{{ $item->shift }}</td>
-                    <td class="text-center">{{ $item->sandblasting ?? '-' }}</td>
-                    <td class="text-center">{{ $item->cuci ?? '-' }}</td>
-                    <td class="text-center">{{ $item->autosol ?? '-' }}</td>
-                    <td class="text-center">{{ $item->gerinda ?? '-' }}</td>
-                    <td class="text-center">{{ $item->oiling ?? '-' }}</td>
-                    <td class="text-center">{{ $item->cav_ng ?? 0 }}</td>
                     <td>{{ $item->detailUser->pluck('name')->implode(', ') ?: '-' }}</td>
+                    <td class="text-center"><strong>{{ $item->listCodeItem->name ?? '-' }}</strong></td>
+                    <td class="text-center">{{ $item->setCodeItem->moldset ?? '-' }}</td>
+                    <td class="text-center">{{ $item->cavCodeItem->moldcav ?? '-' }}</td>
+                    <td class="text-center">{{ $item->listMesin->code ?? '-' }}</td>
+                    <td class="text-center">{{ $item->rak ?? '-' }}</td>
+                    <td class="text-center">{{ $item->norak ?? '-' }}</td>
+                    <td class="text-center">{{ $item->cav_ng ?? 0 }}</td>
+                    <td class="text-center">{{ $formatCheck($item->sandblasting) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->cuci) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->autosol) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->gerinda) }}</td>
+                    <td class="text-center">{{ $formatCheck($item->oiling) }}</td>
                 </tr>
             @endforeach
         </tbody>
