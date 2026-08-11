@@ -306,10 +306,13 @@ class FormSetupCetakanController extends Controller
         if ($request->filled('end_date')) {
             $query->whereDate('tanggal', '<=', $request->input('end_date'));
         }
-        if ($request->filled('start_code_item_id')) {
+        if ($request->filled('start_code_item_id') && $request->filled('end_code_item_id')) {
+            $startId = min($request->input('start_code_item_id'), $request->input('end_code_item_id'));
+            $endId = max($request->input('start_code_item_id'), $request->input('end_code_item_id'));
+            $query->whereBetween('list_code_item_id', [$startId, $endId]);
+        } elseif ($request->filled('start_code_item_id')) {
             $query->where('list_code_item_id', '>=', $request->input('start_code_item_id'));
-        }
-        if ($request->filled('end_code_item_id')) {
+        } elseif ($request->filled('end_code_item_id')) {
             $query->where('list_code_item_id', '<=', $request->input('end_code_item_id'));
         }
 
