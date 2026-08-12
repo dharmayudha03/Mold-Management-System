@@ -144,17 +144,14 @@ class FormSetupCetakanController extends Controller
             ->get();
 
         $selectedSchedule = null;
-        if ($request->has('form_schedule_id')) {
-            $selectedSchedule = FormSchedule::find($request->input('form_schedule_id'));
+        $scheduleId = $request->input('schedule_id') ?? $request->input('form_schedule_id');
+        if ($scheduleId) {
+            $selectedSchedule = FormSchedule::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])->find($scheduleId);
             if ($selectedSchedule) {
                 $setCodeItems = SetCodeItem::where('list_code_item_id', $selectedSchedule->list_code_item_id)->get();
                 $cavCodeItems = CavCodeItem::where('list_code_item_id', $selectedSchedule->list_code_item_id)
                     ->where('set_code_item_id', $selectedSchedule->set_code_item_id)->get();
             }
-        }
-
-        if ($scheduleId) {
-            $selectedSchedule = FormSchedule::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])->find($scheduleId);
         }
 
         $operationalDate = $this->getFactoryOperationalDate();
