@@ -23,7 +23,7 @@
                     <div class="form-grid-2 mb-4">
                         <div class="form-group-item">
                             <label class="form-label">No Document</label>
-                            <input type="text" name="nodoc" value="{{ $nodoc }}" readonly class="form-control font-weight-extrabold text-rose-600 bg-light">
+                            <input type="text" name="nodoc" value="{{ $nodoc ?? '' }}" readonly class="form-control font-weight-extrabold text-rose-600 bg-light">
                         </div>
                         <div class="form-group-item">
                             <label class="form-label">Tanggal <span class="text-danger">*</span></label>
