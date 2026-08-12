@@ -31,7 +31,7 @@
     $canAccessSchedule = $isSuperAdmin || $isPPIC || $isSetupMaint;
     $canAccessCetakanNaik = $isSuperAdmin || $isUserRole;
     $canAccessUsers = $isSuperAdmin;
-    $canAccessLaporanCetakan = $isSuperAdmin || $isUserRole;
+    $canAccessLaporanCetakan = $isSuperAdmin || $isOperatorUser;
 @endphp
 
     <!-- Dashboard Metric Cards (Unified Card Design) -->
