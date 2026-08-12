@@ -158,6 +158,8 @@ class FormSetupCetakanController extends Controller
         $nextNumber = empty($existingNumbers) ? 1 : max($existingNumbers) + 1;
         $nodoc = 'DOC-SETUP' . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
 
+        $prefilledShift = $request->input('shift', $selectedSchedule->shift ?? null);
+
         $operationalDate = $this->getFactoryOperationalDate();
         $user = auth()->user();
         $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
@@ -165,7 +167,7 @@ class FormSetupCetakanController extends Controller
         return view('form-setup-cetakans.create', compact(
             'roles', 'detailUsers', 'listCodeItems', 'setCodeItems', 'cavCodeItems',
             'listMesins', 'occupiedMesinIds', 'kategoris', 'nodoc', 'formSchedules', 'selectedSchedule',
-            'operationalDate', 'isReadonlyDate'
+            'prefilledShift', 'operationalDate', 'isReadonlyDate'
         ));
     }
 
