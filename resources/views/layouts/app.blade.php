@@ -292,50 +292,106 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15,23,42,0.45);
-            z-index: 1025;
-            backdrop-filter: blur(2px);
+            background: rgba(15, 23, 42, 0.65);
+            z-index: 1040;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: opacity 0.25s ease;
         }
         body.sidebar-mobile-open #sidebar-overlay {
             display: block;
         }
 
-        /* Mobile: sidebar slides in from left */
+        /* Mobile Sidebar Drawer Styling */
         @media (max-width: 768px) {
             #accordionSidebar {
                 position: fixed !important;
-                left: -16rem !important;
+                left: -320px !important;
+                top: 0 !important;
+                bottom: 0 !important;
                 height: 100vh !important;
-                width: 15.5rem !important;
-                transition: left 0.25s ease !important;
-                z-index: 1030 !important;
+                width: 280px !important;
+                max-width: 82vw !important;
+                background: linear-gradient(180deg, #0b132b 0%, #1c2541 100%) !important;
+                box-shadow: 4px 0 25px rgba(0, 0, 0, 0.4) !important;
+                transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                z-index: 1050 !important;
+                overflow-y: auto !important;
+                padding-bottom: 2rem !important;
             }
+
             body.sidebar-mobile-open #accordionSidebar {
                 left: 0 !important;
             }
-            #content-wrapper {
-                margin-left: 0 !important;
-                padding-top: 4.5rem !important;
-            }
+
+            /* Responsive Navbar Topbar on Mobile */
             .topbar {
                 left: 0 !important;
                 width: 100% !important;
+                padding-left: 0.65rem !important;
+                padding-right: 0.65rem !important;
+                height: 60px !important;
             }
-            /* Reset collapsed state on mobile */
+
+            #content-wrapper {
+                margin-left: 0 !important;
+                padding-top: 4.2rem !important;
+            }
+
+            /* Reset collapsed state overrides on mobile */
             body.sidebar-collapsed #accordionSidebar {
-                width: 15.5rem !important;
-                left: -16rem !important;
+                width: 280px !important;
+                left: -320px !important;
             }
             body.sidebar-collapsed.sidebar-mobile-open #accordionSidebar {
                 left: 0 !important;
             }
-            body.sidebar-collapsed #content-wrapper {
-                margin-left: 0 !important;
-            }
-            body.sidebar-collapsed .topbar {
-                left: 0 !important;
-                width: 100% !important;
-            }
+        }
+
+        /* Sidebar Menu Items Styling for Maximum Readability & Beauty */
+        .sidebar-dark .nav-item .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            padding: 0.65rem 0.85rem !important;
+            margin: 0.2rem 0.5rem !important;
+            border-radius: 0.65rem !important;
+            color: #94a3b8 !important;
+            font-size: 0.83rem !important;
+            font-weight: 700 !important;
+            line-height: 1.3 !important;
+            white-space: normal !important;
+            word-break: break-word !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .sidebar-dark .nav-item .nav-link:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        .sidebar-dark .nav-item.active .nav-link {
+            color: #ffffff !important;
+            background: rgba(37, 99, 235, 0.25) !important;
+            border-left: 3.5px solid #3b82f6 !important;
+            font-weight: 800 !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+        }
+
+        .sidebar-dark .nav-item .nav-link i {
+            font-size: 0.95rem !important;
+            width: 22px !important;
+            text-align: center !important;
+            flex-shrink: 0 !important;
+        }
+
+        .sidebar-heading {
+            font-size: 0.65rem !important;
+            letter-spacing: 0.08em !important;
+            color: #64748b !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            padding: 0.75rem 1rem 0.35rem 1rem !important;
         }
 
         /* High Contrast Typography */
@@ -676,19 +732,25 @@
             <div id="content">
 
                 <!-- Topbar Fixed Navigation Header -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm px-4">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm px-2 px-sm-4">
 
                     <!-- Sidebar Toggle Button (Desktop: collapse sidebar, Mobile: open sidebar) -->
-                    <button id="sidebarToggleBtn" class="btn btn-link rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;color:#64748b;" title="Toggle Sidebar">
-                        <i class="fas fa-bars" style="font-size:1.1rem;"></i>
+                    <button id="sidebarToggleBtn" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center shadow-2xs mr-2 shrink-0" style="width:38px;height:38px;color:#475569;border:1px solid #e2e8f0;background-color:#f8fafc;" title="Toggle Sidebar">
+                        <i class="fas fa-bars" style="font-size:1.05rem;"></i>
                     </button>
 
                     <!-- Page Title Header in Topbar -->
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-2 overflow-hidden mr-auto">
+                        <!-- Mobile Brand Tag -->
+                        <div class="d-md-none d-flex align-items-center gap-1.5 shrink-0">
+                            <span class="badge bg-primary text-white font-weight-black px-2 py-1.5 rounded-lg shadow-2xs d-flex align-items-center gap-1" style="font-size: 0.65rem; letter-spacing: 0.04em;">
+                                <i class="fas fa-cube"></i> MOLD
+                            </span>
+                        </div>
                         @isset($header)
-                            <h1 class="h4 mb-0 text-gray-800 font-weight-extrabold tracking-tight">{{ $header }}</h1>
+                            <h1 class="h6 h4-md mb-0 text-gray-900 font-weight-extrabold tracking-tight text-truncate" style="font-size: 0.925rem;">{{ $header }}</h1>
                         @else
-                            <h1 class="h4 mb-0 text-gray-800 font-weight-extrabold tracking-tight">Dashboard Overview</h1>
+                            <h1 class="h6 h4-md mb-0 text-gray-900 font-weight-extrabold tracking-tight text-truncate" style="font-size: 0.925rem;">Dashboard Overview</h1>
                         @endisset
                     </div>
 
