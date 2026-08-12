@@ -16,15 +16,23 @@ class FormScheduleController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search = trim($request->input('search', ''));
 
         $query = FormSchedule::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin', 'kategori', 'detailUser', 'formSetupCetakans', 'formSandblastings']);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nodoc', 'like', "%{$search}%")
-                    ->orWhereHas('listCodeItem', function ($sub) use ($search) {
-                        $sub->where('name', 'like', "%{$search}%");
+        if ($search !== '') {
+            $lower = strtolower($search);
+            $compact = str_replace(' ', '', $lower);
+
+            $query->where(function ($q) use ($lower, $compact) {
+                $q->whereRaw('LOWER(nodoc) LIKE ?', ["%{$lower}%"])
+                    ->orWhereHas('listCodeItem', function ($sub) use ($lower, $compact) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
+                            ->orWhereRaw("REPLACE(LOWER(name), ' ', '') LIKE ?", ["%{$compact}%"]);
+                    })
+                    ->orWhereHas('listMesin', function ($sub) use ($lower, $compact) {
+                        $sub->whereRaw('LOWER(code) LIKE ?', ["%{$lower}%"])
+                            ->orWhereRaw("REPLACE(LOWER(code), ' ', '') LIKE ?", ["%{$compact}%"]);
                     });
             });
         }

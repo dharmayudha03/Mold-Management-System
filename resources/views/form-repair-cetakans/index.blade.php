@@ -9,7 +9,7 @@
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                 
                 <!-- Search Form -->
-                <form method="GET" action="{{ route('form-repair-cetakans.index') }}" class="d-flex align-items-center gap-2">
+                <form method="GET" action="{{ url()->current() }}" class="d-flex align-items-center gap-2">
                     <div class="position-relative" style="width: 280px;">
                         <i class="fas fa-search position-absolute text-gray-400" style="left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.8rem;"></i>
                         <input type="text" name="search" value="{{ $search }}" placeholder="Cari No Doc / Code Item / Masalah..." 

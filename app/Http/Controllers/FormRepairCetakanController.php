@@ -15,17 +15,21 @@ class FormRepairCetakanController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search = trim($request->input('search', ''));
 
         $query = FormRepairCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'detailUser', 'latestMjo']);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nodoc', 'like', "%{$search}%")
-                    ->orWhereHas('listCodeItem', function ($sub) use ($search) {
-                        $sub->where('name', 'like', "%{$search}%");
+        if ($search !== '') {
+            $lower = strtolower($search);
+            $compact = str_replace(' ', '', $lower);
+
+            $query->where(function ($q) use ($lower, $compact) {
+                $q->whereRaw('LOWER(nodoc) LIKE ?', ["%{$lower}%"])
+                    ->orWhereHas('listCodeItem', function ($sub) use ($lower, $compact) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
+                            ->orWhereRaw("REPLACE(LOWER(name), ' ', '') LIKE ?", ["%{$compact}%"]);
                     })
-                    ->orWhere('problem', 'like', "%{$search}%");
+                    ->orWhereRaw('LOWER(problem) LIKE ?', ["%{$lower}%"]);
             });
         }
 

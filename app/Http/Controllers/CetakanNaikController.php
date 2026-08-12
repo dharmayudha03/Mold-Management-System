@@ -14,19 +14,30 @@ class CetakanNaikController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search = trim($request->input('search', ''));
 
         $query = CetakanNaik::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin']);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('listCodeItem', function ($sub) use ($search) {
-                    $sub->where('name', 'like', "%{$search}%");
+        if ($search !== '') {
+            $lower = strtolower($search);
+            $compact = str_replace(' ', '', $lower);
+
+            $query->where(function ($q) use ($lower, $compact) {
+                $q->whereHas('listCodeItem', function ($sub) use ($lower, $compact) {
+                    $sub->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
+                        ->orWhereRaw("REPLACE(LOWER(name), ' ', '') LIKE ?", ["%{$compact}%"]);
                 })
-                ->orWhereHas('listMesin', function ($sub) use ($search) {
-                    $sub->where('code', 'like', "%{$search}%");
+                ->orWhereHas('listMesin', function ($sub) use ($lower, $compact) {
+                    $sub->whereRaw('LOWER(code) LIKE ?', ["%{$lower}%"])
+                        ->orWhereRaw("REPLACE(LOWER(code), ' ', '') LIKE ?", ["%{$compact}%"]);
                 })
-                ->orWhere('keterangan', 'like', "%{$search}%");
+                ->orWhereHas('setCodeItem', function ($sub) use ($lower) {
+                    $sub->whereRaw('LOWER(moldset) LIKE ?', ["%{$lower}%"]);
+                })
+                ->orWhereHas('cavCodeItem', function ($sub) use ($lower) {
+                    $sub->whereRaw('LOWER(moldcav) LIKE ?', ["%{$lower}%"]);
+                })
+                ->orWhereRaw('LOWER(keterangan) LIKE ?', ["%{$lower}%"]);
             });
         }
 

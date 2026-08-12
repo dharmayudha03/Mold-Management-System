@@ -14,22 +14,26 @@ class PenomoranRakController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search = trim($request->input('search', ''));
 
         $query = PenomoranRak::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listRak', 'listNoRak']);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('rak', 'like', "%{$search}%")
-                ->orWhere('norak', 'like', "%{$search}%")
-                ->orWhereHas('listCodeItem', function ($sub) use ($search) {
-                    $sub->where('name', 'like', "%{$search}%");
+        if ($search !== '') {
+            $lower = strtolower($search);
+            $compact = str_replace(' ', '', $lower);
+
+            $query->where(function ($q) use ($lower, $compact) {
+                $q->whereRaw('LOWER(rak) LIKE ?', ["%{$lower}%"])
+                ->orWhereRaw('LOWER(norak) LIKE ?', ["%{$lower}%"])
+                ->orWhereHas('listCodeItem', function ($sub) use ($lower, $compact) {
+                    $sub->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
+                        ->orWhereRaw("REPLACE(LOWER(name), ' ', '') LIKE ?", ["%{$compact}%"]);
                 })
-                ->orWhereHas('listRak', function ($sub) use ($search) {
-                    $sub->where('rak', 'like', "%{$search}%");
+                ->orWhereHas('listRak', function ($sub) use ($lower) {
+                    $sub->whereRaw('LOWER(rak) LIKE ?', ["%{$lower}%"]);
                 })
-                ->orWhereHas('listNoRak', function ($sub) use ($search) {
-                    $sub->where('norak', 'like', "%{$search}%");
+                ->orWhereHas('listNoRak', function ($sub) use ($lower) {
+                    $sub->whereRaw('LOWER(norak) LIKE ?', ["%{$lower}%"]);
                 });
             });
         }

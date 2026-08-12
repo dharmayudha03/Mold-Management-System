@@ -16,22 +16,26 @@ class FormMjoController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search = trim($request->input('search', ''));
 
         $query = FormMjo::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'detailUser', 'formRepairCetakan']);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nodoc', 'like', "%{$search}%")
-                    ->orWhereHas('listCodeItem', function ($sub) use ($search) {
-                        $sub->where('name', 'like', "%{$search}%");
+        if ($search !== '') {
+            $lower = strtolower($search);
+            $compact = str_replace(' ', '', $lower);
+
+            $query->where(function ($q) use ($lower, $compact) {
+                $q->whereRaw('LOWER(nodoc) LIKE ?', ["%{$lower}%"])
+                    ->orWhereHas('listCodeItem', function ($sub) use ($lower, $compact) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
+                            ->orWhereRaw("REPLACE(LOWER(name), ' ', '') LIKE ?", ["%{$compact}%"]);
                     })
-                    ->orWhereHas('formRepairCetakan', function ($sub) use ($search) {
-                        $sub->where('nodoc', 'like', "%{$search}%");
+                    ->orWhereHas('formRepairCetakan', function ($sub) use ($lower) {
+                        $sub->whereRaw('LOWER(nodoc) LIKE ?', ["%{$lower}%"]);
                     })
-                    ->orWhere('penanganan', 'like', "%{$search}%")
-                    ->orWhere('tindakan_moldshop', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%");
+                    ->orWhereRaw('LOWER(penanganan) LIKE ?', ["%{$lower}%"])
+                    ->orWhereRaw('LOWER(tindakan_moldshop) LIKE ?', ["%{$lower}%"])
+                    ->orWhereRaw('LOWER(status) LIKE ?', ["%{$lower}%"]);
             });
         }
 

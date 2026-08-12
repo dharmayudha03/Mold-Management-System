@@ -10,13 +10,14 @@ class DetailUserController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search = trim($request->input('search', ''));
         $query = DetailUser::with('role');
 
-        if ($search) {
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhereHas('role', function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
+        if ($search !== '') {
+            $lower = strtolower($search);
+            $query->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
+                ->orWhereHas('role', function ($q) use ($lower) {
+                    $q->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"]);
                 });
         }
 
