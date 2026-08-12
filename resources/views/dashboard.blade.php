@@ -12,6 +12,7 @@
     $isMSD = $authUser && ($authUser->hasRole('Msd') || $authUser->hasRole('msd') || $authUser->hasRole('MSD'));
     $isPPIC = $authUser && ($authUser->hasRole('PPIC') || $authUser->hasRole('Ppic') || $authUser->hasRole('ppic') || $authUser->hasRole('Hatsumono'));
     $isUserRole = $authUser && ($authUser->hasRole('User') || $authUser->hasRole('user') || $authUser->hasRole('Leader') || $authUser->hasRole('Supervisor') || $authUser->hasRole('leader') || $authUser->hasRole('supervisor'));
+    $isOperatorUser = $authUser && ($authUser->hasRole('User') || $authUser->hasRole('user'));
 
     // ATURAN TERBARU:
     // 1. Setup & Maintenance: Form Setup, Sandblasting, Schedule (PEJO Read-only)
