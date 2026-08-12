@@ -3,9 +3,6 @@
     <!-- Sidebar - Brand Header (Clean MOLD SYSTEM Title + Mobile Close Button) -->
     <div class="sidebar-brand d-flex align-items-center justify-content-between px-3.5 py-3 text-decoration-none border-bottom border-gray-800">
         <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none">
-            <div class="rounded-lg bg-primary text-white d-flex align-items-center justify-content-center shadow-xs" style="width: 34px; height: 34px;">
-                <i class="fas fa-cube" style="font-size: 0.95rem;"></i>
-            </div>
             <div class="text-left">
                 <div class="text-white font-weight-black text-sm tracking-wider leading-tight" style="letter-spacing: 0.08em;">MOLD SYSTEM</div>
                 <div class="text-[10px] text-gray-400 font-weight-bold">PT. IRC INOAC INDONESIA</div>

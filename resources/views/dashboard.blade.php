@@ -33,35 +33,11 @@
     $canAccessUsers = $isSuperAdmin;
 @endphp
 
-    <!-- 5 Top Metric Cards -->
-    <div class="row mb-4">
+    <!-- Dashboard Metric Cards (Unified Card Design) -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3 mb-4">
 
-        <!-- Card 1: Total Code Item -->
-        <div class="col-xl col-md-6 mb-3">
-            @if($canAccessCodeItem)
-            <a href="{{ route('code-items.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
-            @else
-            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
-            @endif
-                <div class="card-body p-3 d-flex align-items-center gap-3">
-                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #2563eb !important;">
-                        <i class="fas fa-cubes fa-lg text-white"></i>
-                    </div>
-                    <div>
-                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">TOTAL CODE ITEM</div>
-                        <div class="h4 mb-0 font-weight-black" id="totalCodeItem" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalCodeItem) }}</div>
-                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Data Mold Master</div>
-                    </div>
-                </div>
-            @if($canAccessCodeItem)
-            </a>
-            @else
-            </div>
-            @endif
-        </div>
-
-        <!-- Card 2: Mesin Aktif -->
-        <div class="col-xl col-md-6 mb-3">
+        <!-- Card 1: Mesin Aktif -->
+        <div class="col mb-3">
             @if($canAccessMesin)
             <a href="{{ route('list-mesins.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
@@ -84,8 +60,8 @@
             @endif
         </div>
 
-        <!-- Card 3: Form Setup -->
-        <div class="col-xl col-md-6 mb-3">
+        <!-- Card 2: Form Setup -->
+        <div class="col mb-3">
             @if($canAccessSetup)
             <a href="{{ route('form-setup-cetakans.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
@@ -108,8 +84,8 @@
             @endif
         </div>
 
-        <!-- Card 4: Cetakan Naik -->
-        <div class="col-xl col-md-6 mb-3">
+        <!-- Card 3: Cetakan Naik -->
+        <div class="col mb-3">
             @if($canAccessCetakanNaik)
             <a href="{{ route('cetakan-naiks.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
@@ -132,8 +108,8 @@
             @endif
         </div>
 
-        <!-- Card 5: Sandblasting -->
-        <div class="col-xl col-md-6 mb-3">
+        <!-- Card 4: Sandblasting -->
+        <div class="col mb-3">
             @if($canAccessSandblasting)
             <a href="{{ route('form-sandblastings.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
@@ -156,25 +132,22 @@
             @endif
         </div>
 
-    </div>
-
-    <!-- Secondary Clean Metrics Row -->
-    <div class="row mb-4">
-        <!-- PEJO REPAIR -->
-        <div class="col-6 col-md">
+        <!-- Card 5: PEJO Repair -->
+        <div class="col mb-3">
             @if($canAccessPejo)
-            <a href="{{ route('form-repair-cetakans.index') }}" class="card border-0 shadow-xs text-decoration-none bg-white hover:bg-slate-50 transition-all cursor-pointer" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important;">
+            <a href="{{ route('form-repair-cetakans.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs bg-white" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important; cursor: default;">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
-                <div class="card-body p-2.5 d-flex align-items-center justify-content-between">
-                    <div>
-                        <div class="uppercase text-[10px] font-weight-black" style="color: #64748b;">PEJO REPAIR</div>
-                        <div class="h5 mb-0 font-weight-black" id="totalRepair" style="color: #0f172a;">{{ number_format($totalRepair) }}</div>
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #f43f5e !important;">
+                        <i class="fas fa-wrench fa-lg text-white"></i>
                     </div>
-                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: #f43f5e;">
-                        <i class="fas fa-wrench text-xs"></i>
-                    </span>
+                    <div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">PEJO REPAIR</div>
+                        <div class="h4 mb-0 font-weight-black" id="totalRepair" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalRepair) }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Perbaikan Cetakan</div>
+                    </div>
                 </div>
             @if($canAccessPejo)
             </a>
@@ -183,21 +156,22 @@
             @endif
         </div>
 
-        <!-- FORM MJO -->
-        <div class="col-6 col-md">
+        <!-- Card 6: Form MJO -->
+        <div class="col mb-3">
             @if($canAccessMjo)
-            <a href="{{ route('form-mjos.index') }}" class="card border-0 shadow-xs text-decoration-none bg-white hover:bg-slate-50 transition-all cursor-pointer" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important;">
+            <a href="{{ route('form-mjos.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs bg-white" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important; cursor: default;">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
-                <div class="card-body p-2.5 d-flex align-items-center justify-content-between">
-                    <div>
-                        <div class="uppercase text-[10px] font-weight-black" style="color: #64748b;">FORM MJO</div>
-                        <div class="h5 mb-0 font-weight-black" id="totalMjo" style="color: #0f172a;">{{ number_format($totalMjo) }}</div>
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #0284c7 !important;">
+                        <i class="fas fa-tools fa-lg text-white"></i>
                     </div>
-                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: #0284c7;">
-                        <i class="fas fa-tools text-xs"></i>
-                    </span>
+                    <div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">FORM MJO</div>
+                        <div class="h4 mb-0 font-weight-black" id="totalMjo" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalMjo) }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Permintaan Repair MJO</div>
+                    </div>
                 </div>
             @if($canAccessMjo)
             </a>
@@ -206,21 +180,22 @@
             @endif
         </div>
 
-        <!-- SCHEDULE -->
-        <div class="col-6 col-md">
+        <!-- Card 7: Schedule -->
+        <div class="col mb-3">
             @if($canAccessSchedule)
-            <a href="{{ route('form-schedules.index') }}" class="card border-0 shadow-xs text-decoration-none bg-white hover:bg-slate-50 transition-all cursor-pointer" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important;">
+            <a href="{{ route('form-schedules.index') }}" class="card border-0 shadow-xs h-100 bg-white text-decoration-none hover:shadow-md transition-all cursor-pointer" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important;">
             @else
-            <div class="card border-0 shadow-xs bg-white" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important; cursor: default;">
+            <div class="card border-0 shadow-xs h-100 bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; cursor: default;">
             @endif
-                <div class="card-body p-2.5 d-flex align-items-center justify-content-between">
-                    <div>
-                        <div class="uppercase text-[10px] font-weight-black" style="color: #64748b;">SCHEDULE</div>
-                        <div class="h5 mb-0 font-weight-black" id="totalSchedule" style="color: #0f172a;">{{ number_format($totalSchedule) }}</div>
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-xl text-white d-flex align-items-center justify-content-center shrink-0" style="width: 44px; height: 44px; border-radius: 0.75rem; background-color: #10b981 !important;">
+                        <i class="fas fa-calendar-check fa-lg text-white"></i>
                     </div>
-                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: #10b981;">
-                        <i class="fas fa-calendar-check text-xs"></i>
-                    </span>
+                    <div>
+                        <div class="text-[10px] font-weight-black uppercase tracking-wider" style="color: #64748b;">SCHEDULE</div>
+                        <div class="h4 mb-0 font-weight-black" id="totalSchedule" style="color: #0f172a; font-size: 1.3rem; line-height: 1.2;">{{ number_format($totalSchedule) }}</div>
+                        <div class="text-[10px] font-weight-bold" style="color: #94a3b8;">Jadwal Mold Setup</div>
+                    </div>
                 </div>
             @if($canAccessSchedule)
             </a>
@@ -229,22 +204,6 @@
             @endif
         </div>
 
-        <!-- USERS SYSTEM -->
-        @if($canAccessUsers)
-        <div class="col-6 col-md">
-            <a href="{{ route('users.index') }}" class="card border-0 shadow-xs text-decoration-none bg-white hover:bg-slate-50 transition-all cursor-pointer" style="border-radius: 0.75rem; border: 1px solid #f1f5f9 !important;">
-                <div class="card-body p-2.5 d-flex align-items-center justify-content-between">
-                    <div>
-                        <div class="uppercase text-[10px] font-weight-black" style="color: #64748b;">USERS SYSTEM</div>
-                        <div class="h5 mb-0 font-weight-black" id="totalUser" style="color: #0f172a;">{{ number_format($totalUser) }}</div>
-                    </div>
-                    <span class="rounded-circle text-white p-1 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background-color: #8b5cf6;">
-                        <i class="fas fa-users text-xs"></i>
-                    </span>
-                </div>
-            </a>
-        </div>
-        @endif
     </div>
 
 
