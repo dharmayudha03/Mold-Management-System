@@ -31,6 +31,7 @@
     $canAccessSchedule = $isSuperAdmin || $isPPIC || $isSetupMaint;
     $canAccessCetakanNaik = $isSuperAdmin || $isUserRole;
     $canAccessUsers = $isSuperAdmin;
+    $canAccessLaporanCetakan = $isSuperAdmin || $isUserRole;
 @endphp
 
     <!-- Dashboard Metric Cards (Unified Card Design) -->
@@ -217,9 +218,11 @@
                             <i class="fas fa-chart-line text-primary mr-1.5"></i> Ringkasan Laporan Cetakan (Mold Activity Tracking)
                         </h5>
                     </div>
+                    @if($canAccessLaporanCetakan)
                     <a href="{{ route('reports.molds') }}" class="btn btn-sm btn-primary font-weight-bold px-3 py-1.5 text-xs text-white" style="border-radius: 0.6rem; background-color: #2563eb; border: none;">
                         Lihat Laporan Lengkap &rarr;
                     </a>
+                    @endif
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive custom-scrollbar" style="max-height: 340px; overflow-y: auto;">
