@@ -19,32 +19,41 @@ class DashboardController extends Controller
     public function index()
     {
         $totalCodeItem = CodeItem::count();
-        // Count ONLY active machines (status = Aktif)
         $totalMesin = Mesin::where('status', 'Aktif')->count();
         $totalSetup = FormSetupCetakan::count();
         $totalSandblasting = FormSandblasting::count();
         $totalRepair = FormRepairCetakan::count();
         $totalMjo = FormMjo::count();
         $totalSchedule = FormSchedule::count();
-        
-        $activeListMesinIds = Mesin::where('status', 'Aktif')->pluck('list_mesin_id');
+        $totalUser = User::count();
 
-        $cetakanNaikQuery = CetakanNaik::whereNotNull('list_code_item_id');
-        if ($activeListMesinIds->isNotEmpty()) {
-            $cetakanNaikQuery->whereIn('list_mesin_id', $activeListMesinIds);
-        }
+        // Optimized subquery execution (1 SQL query instead of pluck array overhead)
+        $activeMesinSubquery = Mesin::where('status', 'Aktif')->select('list_mesin_id');
+
+        $cetakanNaikQuery = CetakanNaik::whereNotNull('list_code_item_id')
+            ->whereIn('list_mesin_id', $activeMesinSubquery);
 
         $totalCetakanNaik = (clone $cetakanNaikQuery)->count();
 
-        $totalUser = User::count();
+        // Optimized eager loading selects
+        $recentHistory = HistoryCetakan::with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'cavCodeItem:id,moldcav'])
+            ->latest('id')
+            ->take(10)
+            ->get();
 
-        $recentHistory = HistoryCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem'])->latest()->take(10)->get();
-        $recentSetup = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get();
-        $recentSandblasting = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get();
+        $recentSetup = FormSetupCetakan::with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'listMesin:id,code'])
+            ->latest('id')
+            ->take(10)
+            ->get();
+
+        $recentSandblasting = FormSandblasting::with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'listMesin:id,code'])
+            ->latest('id')
+            ->take(10)
+            ->get();
         
         $recentCetakanNaik = $cetakanNaikQuery
-            ->with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])
-            ->latest()
+            ->with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'cavCodeItem:id,moldcav', 'listMesin:id,code'])
+            ->latest('id')
             ->take(10)
             ->get();
 
@@ -74,46 +83,57 @@ class DashboardController extends Controller
         $totalRepair = FormRepairCetakan::count();
         $totalMjo = FormMjo::count();
         $totalSchedule = FormSchedule::count();
-        
-        $activeListMesinIds = Mesin::where('status', 'Aktif')->pluck('list_mesin_id');
-
-        $cetakanNaikQuery = CetakanNaik::whereNotNull('list_code_item_id');
-        if ($activeListMesinIds->isNotEmpty()) {
-            $cetakanNaikQuery->whereIn('list_mesin_id', $activeListMesinIds);
-        }
-
-        $totalCetakanNaik = (clone $cetakanNaikQuery)->count();
         $totalUser = User::count();
 
-        $recentHistory = HistoryCetakan::with(['listCodeItem', 'setCodeItem', 'cavCodeItem'])->latest()->take(10)->get()->map(function($item) {
-            return [
-                'code_item' => $item->listCodeItem->name ?? '-',
-                'mold_set' => $item->setCodeItem->moldset ?? '-',
-                'deskripsi' => $item->deskripsi ?? '-',
-            ];
-        });
+        $activeMesinSubquery = Mesin::where('status', 'Aktif')->select('list_mesin_id');
 
-        $recentSetup = FormSetupCetakan::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get()->map(function($item) {
-            return [
-                'code_item' => $item->listCodeItem->name ?? '-',
-                'mold_set' => $item->setCodeItem->moldset ?? '-',
-                'tanggal' => $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-',
-            ];
-        });
+        $cetakanNaikQuery = CetakanNaik::whereNotNull('list_code_item_id')
+            ->whereIn('list_mesin_id', $activeMesinSubquery);
 
-        $recentSandblasting = FormSandblasting::with(['listCodeItem', 'setCodeItem', 'listMesin'])->latest()->take(10)->get()->map(function($item) {
-            return [
-                'code_item' => $item->listCodeItem->name ?? '-',
-                'mold_set' => $item->setCodeItem->moldset ?? '-',
-                'tanggal' => $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-',
-            ];
-        });
+        $totalCetakanNaik = (clone $cetakanNaikQuery)->count();
+
+        $recentHistory = HistoryCetakan::with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'cavCodeItem:id,moldcav'])
+            ->latest('id')
+            ->take(10)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'code_item' => $item->listCodeItem->name ?? '-',
+                    'mold_set' => $item->setCodeItem->moldset ?? '-',
+                    'deskripsi' => $item->deskripsi ?? '-',
+                ];
+            });
+
+        $recentSetup = FormSetupCetakan::with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'listMesin:id,code'])
+            ->latest('id')
+            ->take(10)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'code_item' => $item->listCodeItem->name ?? '-',
+                    'mold_set' => $item->setCodeItem->moldset ?? '-',
+                    'tanggal' => $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-',
+                ];
+            });
+
+        $recentSandblasting = FormSandblasting::with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'listMesin:id,code'])
+            ->latest('id')
+            ->take(10)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'code_item' => $item->listCodeItem->name ?? '-',
+                    'mold_set' => $item->setCodeItem->moldset ?? '-',
+                    'tanggal' => $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-',
+                ];
+            });
 
         $recentCetakanNaik = $cetakanNaikQuery
-            ->with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])
-            ->latest()
+            ->with(['listCodeItem:id,name', 'setCodeItem:id,moldset', 'cavCodeItem:id,moldcav', 'listMesin:id,code'])
+            ->latest('id')
             ->take(10)
-            ->get()->map(function($item) {
+            ->get()
+            ->map(function($item) {
                 return [
                     'mesin' => $item->listMesin->code ?? '-',
                     'code_item' => $item->listCodeItem->name ?? '-',
