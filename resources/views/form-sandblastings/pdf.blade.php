@@ -53,6 +53,7 @@
                 <th class="text-center">Autosol</th>
                 <th class="text-center">Gerinda</th>
                 <th class="text-center">Oiling</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -82,6 +83,7 @@
                     <td class="text-center">{{ $formatCheck($item->autosol) }}</td>
                     <td class="text-center">{{ $formatCheck($item->gerinda) }}</td>
                     <td class="text-center">{{ $formatCheck($item->oiling) }}</td>
+                    <td>{{ $item->keterangan ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

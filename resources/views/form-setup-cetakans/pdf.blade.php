@@ -53,6 +53,7 @@
                 <th class="text-center">Piston</th>
                 <th class="text-center">Pot</th>
                 <th class="text-center">PL</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -82,6 +83,7 @@
                     <td class="text-center">{{ $formatCheck($item->piston) }}</td>
                     <td class="text-center">{{ $formatCheck($item->pot) }}</td>
                     <td class="text-center">{{ $formatCheck($item->pl) }}</td>
+                    <td>{{ $item->keterangan ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

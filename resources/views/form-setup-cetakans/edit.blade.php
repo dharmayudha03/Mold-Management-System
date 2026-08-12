@@ -164,6 +164,12 @@
                         </div>
                     </div>
 
+                    <!-- Input Keterangan -->
+                    <div class="mb-4">
+                        <label class="form-label font-weight-extrabold text-gray-900 text-xs">Keterangan <span class="text-gray-400 font-weight-normal">(Opsional)</span></label>
+                        <textarea name="keterangan" rows="2" class="form-control text-xs" style="border-radius: 0.75rem;" placeholder="Tambahkan keterangan/catatan tambahan jika ada...">{{ old('keterangan', $formSetupCetakan->keterangan) }}</textarea>
+                    </div>
+
                     <div class="pt-3 border-top d-flex align-items-center justify-content-end gap-2">
                         <a href="{{ route('form-setup-cetakans.index') }}" class="btn btn-sm btn-outline-secondary font-weight-bold px-4 py-2" style="border-radius: 0.75rem;">
                             Batal

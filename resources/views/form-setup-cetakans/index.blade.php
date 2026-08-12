@@ -231,6 +231,7 @@
                             <th class="py-3 text-center">Pot</th>
                             <th class="py-3 text-center">PL</th>
                             <th class="py-3 text-center">Cav NG</th>
+                            <th class="py-3">Keterangan</th>
                             <th class="py-3 text-right pr-4">Aksi</th>
                         </tr>
                     </thead>
@@ -328,6 +329,11 @@
                                             0
                                         </span>
                                     @endif
+                                </td>
+
+                                {{-- Keterangan --}}
+                                <td class="text-gray-700 font-weight-bold" style="max-width: 150px; white-space: normal;">
+                                    {{ $item->keterangan ?? '-' }}
                                 </td>
 
                                 <td class="text-right pr-4">

@@ -40,7 +40,8 @@ class FormSetupCetakanController extends Controller
                     })
                     ->orWhereHas('kategori', function ($sub) use ($lower) {
                         $sub->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"]);
-                    });
+                    })
+                    ->orWhereRaw('LOWER(keterangan) LIKE ?', ["%{$lower}%"]);
             });
         }
 
@@ -152,20 +153,17 @@ class FormSetupCetakanController extends Controller
             }
         }
 
-        $existingNumbers = FormSetupCetakan::pluck('id')->toArray();
-        $nextNumber = empty($existingNumbers) ? 1 : max($existingNumbers) + 1;
-        $nodoc = 'DOC-SETUP' . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
-
-        // Ambil shift dari request (dikirim via URL dari index form schedule)
-        $prefilledShift = $request->input('shift', $selectedSchedule->shift ?? null);
+        if ($scheduleId) {
+            $selectedSchedule = FormSchedule::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin'])->find($scheduleId);
+        }
 
         $operationalDate = $this->getFactoryOperationalDate();
+        $user = auth()->user();
         $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
 
         return view('form-setup-cetakans.create', compact(
-            'roles', 'detailUsers', 'listCodeItems', 'setCodeItems',
-            'cavCodeItems', 'listMesins', 'occupiedMesinIds', 'kategoris', 'nodoc',
-            'formSchedules', 'selectedSchedule', 'prefilledShift',
+            'roles', 'detailUsers', 'listCodeItems',
+            'listMesins', 'occupiedMesinIds', 'kategoris', 'selectedSchedule',
             'operationalDate', 'isReadonlyDate'
         ));
     }
@@ -197,6 +195,7 @@ class FormSetupCetakanController extends Controller
             'piston' => 'required|string',
             'pot' => 'required|string',
             'pl' => 'required|string',
+            'keterangan' => 'nullable|string',
             'form_schedule_id' => 'nullable|exists:form_schedules,id',
         ]);
 
@@ -208,8 +207,8 @@ class FormSetupCetakanController extends Controller
         unset($validated['detail_user_id']);
         $validated['cav_ng'] = $validated['cav_ng'] ?? 0;
 
-        $formSetup = FormSetupCetakan::create($validated);
-        $formSetup->detailUser()->sync($detailUserIds);
+        $formSetupCetakan = FormSetupCetakan::create($validated);
+        $formSetupCetakan->detailUser()->sync($detailUserIds);
 
         if (!empty($validated['form_schedule_id'])) {
             FormSchedule::where('id', $validated['form_schedule_id'])->update(['status' => 'SELESAI']);
@@ -276,6 +275,7 @@ class FormSetupCetakanController extends Controller
             'piston' => 'required|string',
             'pot' => 'required|string',
             'pl' => 'required|string',
+            'keterangan' => 'nullable|string',
         ]);
 
         $detailUserIds = $validated['detail_user_id'];
@@ -352,7 +352,8 @@ class FormSetupCetakanController extends Controller
                 'Core',
                 'Piston',
                 'Pot',
-                'PL'
+                'PL',
+                'Keterangan'
             ]);
 
             $formatCheck = function($val) {
@@ -379,7 +380,8 @@ class FormSetupCetakanController extends Controller
                     $formatCheck($item->core),
                     $formatCheck($item->piston),
                     $formatCheck($item->pot),
-                    $formatCheck($item->pl)
+                    $formatCheck($item->pl),
+                    $item->keterangan ?? '-'
                 ]);
             }
 

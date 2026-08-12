@@ -42,7 +42,8 @@ class FormSandblastingController extends Controller
                     })
                     ->orWhereHas('kategori', function ($sub) use ($lower) {
                         $sub->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"]);
-                    });
+                    })
+                    ->orWhereRaw('LOWER(keterangan) LIKE ?', ["%{$lower}%"]);
             });
         }
 
@@ -241,6 +242,7 @@ class FormSandblastingController extends Controller
             'autosol' => 'required|string',
             'gerinda' => 'required|string',
             'oiling' => 'required|string',
+            'keterangan' => 'nullable|string',
         ]);
 
         if ($isReadonlyDate) {
@@ -334,6 +336,7 @@ class FormSandblastingController extends Controller
             'autosol' => 'required|string',
             'gerinda' => 'required|string',
             'oiling' => 'required|string',
+            'keterangan' => 'nullable|string',
         ]);
 
         if ($isReadonlyDate) {
@@ -429,7 +432,8 @@ class FormSandblastingController extends Controller
                 'Cuci',
                 'Autosol',
                 'Gerinda',
-                'Oiling'
+                'Oiling',
+                'Keterangan'
             ]);
 
             $formatCheck = function($val) {
@@ -456,7 +460,8 @@ class FormSandblastingController extends Controller
                     $formatCheck($item->cuci),
                     $formatCheck($item->autosol),
                     $formatCheck($item->gerinda),
-                    $formatCheck($item->oiling)
+                    $formatCheck($item->oiling),
+                    $item->keterangan ?? '-'
                 ]);
             }
 
