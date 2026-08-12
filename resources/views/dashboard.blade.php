@@ -207,6 +207,82 @@
     </div>
 
 
+    <!-- Main Table 0: Ringkasan Laporan Cetakan (Placed Above Cetakan Naik) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-xs bg-white" style="border-radius: 0.85rem; border: 1px solid #f1f5f9 !important; overflow: hidden;">
+                <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between bg-white border-bottom-0">
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="m-0 font-weight-extrabold text-gray-900" style="font-size: 1.05rem; color: #0f172a;">
+                            <i class="fas fa-chart-line text-primary mr-1.5"></i> Ringkasan Laporan Cetakan (Mold Activity Tracking)
+                        </h5>
+                    </div>
+                    <a href="{{ route('reports.molds') }}" class="btn btn-sm btn-primary font-weight-bold px-3 py-1.5 text-xs text-white" style="border-radius: 0.6rem; background-color: #2563eb; border: none;">
+                        Lihat Laporan Lengkap &rarr;
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive custom-scrollbar" style="max-height: 340px; overflow-y: auto;">
+                        <table class="table table-hover mb-0 text-xs w-100">
+                            <thead class="bg-light" style="background-color: #f8fafc !important;">
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <th class="py-3 px-4 font-weight-extrabold text-gray-800" style="color: #334155 !important;">CODE ITEM</th>
+                                    <th class="py-3 px-4 font-weight-extrabold text-gray-800 text-center" style="color: #334155 !important;">TOTAL MASAK (NAIK)</th>
+                                    <th class="py-3 px-4 font-weight-extrabold text-gray-800" style="color: #334155 !important;">TERAKHIR MASAK</th>
+                                    <th class="py-3 px-4 font-weight-extrabold text-gray-800 text-center" style="color: #334155 !important;">SANDBLASTING</th>
+                                    <th class="py-3 px-4 font-weight-extrabold text-gray-800 text-center" style="color: #334155 !important;">TOTAL REPAIR</th>
+                                    <th class="py-3 px-4 font-weight-extrabold text-gray-800" style="color: #334155 !important;">TERAKHIR REPAIR</th>
+                                    <th class="py-3 px-4 font-weight-extrabold text-gray-800" style="color: #334155 !important;">STATUS & LOKASI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportMoldsTbody">
+                                @forelse($reportMolds as $item)
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td class="py-3 px-4 font-weight-black" style="color: #0f172a;">
+                                            <span class="badge bg-slate-100 text-gray-900 border px-2.5 py-1 font-weight-black" style="border-radius: 0.5rem; font-size: 0.78rem;">
+                                                {{ $item['name'] }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center font-weight-extrabold">
+                                            <span class="badge bg-emerald-50 text-emerald-700 px-2.5 py-1" style="border-radius: 0.5rem; font-size: 0.75rem;">
+                                                {{ number_format($item['total_masak']) }}x
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4 font-weight-bold" style="color: #475569;">
+                                            <i class="far fa-calendar-alt text-gray-400 mr-1"></i> {{ $item['tgl_masak'] }}
+                                        </td>
+                                        <td class="py-3 px-4 text-center font-weight-extrabold">
+                                            <span class="badge bg-amber-50 text-amber-700 px-2.5 py-1" style="border-radius: 0.5rem; font-size: 0.75rem;">
+                                                {{ number_format($item['total_sandblasting']) }}x
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center font-weight-extrabold">
+                                            <span class="badge bg-rose-50 text-rose-700 px-2.5 py-1" style="border-radius: 0.5rem; font-size: 0.75rem;">
+                                                {{ number_format($item['total_repair']) }}x
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4 font-weight-bold" style="color: #475569;">
+                                            <i class="far fa-clock text-gray-400 mr-1"></i> {{ $item['tgl_repair'] }}
+                                        </td>
+                                        <td class="py-3 px-4 font-weight-bold">
+                                            <span class="badge px-2.5 py-1 font-weight-bold border {{ $item['badge_class'] }}" style="border-radius: 0.5rem; font-size: 0.725rem;">
+                                                {{ $item['status'] }} &bull; {{ $item['lokasi'] }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center text-gray-500 py-4 italic">Belum ada data laporan cetakan</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Table 1: Status Cetakan Naik Terbaru (Matching Heater Project Table Style) -->
     <div class="row mb-4">
         <div class="col-12">
@@ -503,6 +579,50 @@
                                     <td style="color: #0f172a; font-weight: 800;">${escapeHtml(item.code_item)}</td>
                                     <td style="color: #475569; font-weight: 700;">${escapeHtml(item.mold_set)}</td>
                                     <td style="color: #64748b; font-weight: 700;" class="text-truncate" style="max-width: 120px;" title="${escapeHtml(item.deskripsi)}">${escapeHtml(item.deskripsi)}</td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
+
+                    // 6. Update Table Ringkasan Laporan Cetakan
+                    const reportMoldsTbody = document.getElementById('reportMoldsTbody');
+                    if (reportMoldsTbody && Array.isArray(data.reportMolds)) {
+                        if (data.reportMolds.length === 0) {
+                            reportMoldsTbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500 py-4 italic">Belum ada data laporan cetakan</td></tr>';
+                        } else {
+                            reportMoldsTbody.innerHTML = data.reportMolds.map(item => `
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td class="py-3 px-4 font-weight-black" style="color: #0f172a;">
+                                        <span class="badge bg-slate-100 text-gray-900 border px-2.5 py-1 font-weight-black" style="border-radius: 0.5rem; font-size: 0.78rem;">
+                                            ${escapeHtml(item.name)}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 text-center font-weight-extrabold">
+                                        <span class="badge bg-emerald-50 text-emerald-700 px-2.5 py-1" style="border-radius: 0.5rem; font-size: 0.75rem;">
+                                            ${escapeHtml(item.total_masak)}x
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 font-weight-bold" style="color: #475569;">
+                                        <i class="far fa-calendar-alt text-gray-400 mr-1"></i> ${escapeHtml(item.tgl_masak)}
+                                    </td>
+                                    <td class="py-3 px-4 text-center font-weight-extrabold">
+                                        <span class="badge bg-amber-50 text-amber-700 px-2.5 py-1" style="border-radius: 0.5rem; font-size: 0.75rem;">
+                                            ${escapeHtml(item.total_sandblasting)}x
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 text-center font-weight-extrabold">
+                                        <span class="badge bg-rose-50 text-rose-700 px-2.5 py-1" style="border-radius: 0.5rem; font-size: 0.75rem;">
+                                            ${escapeHtml(item.total_repair)}x
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 font-weight-bold" style="color: #475569;">
+                                        <i class="far fa-clock text-gray-400 mr-1"></i> ${escapeHtml(item.tgl_repair)}
+                                    </td>
+                                    <td class="py-3 px-4 font-weight-bold">
+                                        <span class="badge px-2.5 py-1 font-weight-bold border ${escapeHtml(item.badge_class)}" style="border-radius: 0.5rem; font-size: 0.725rem;">
+                                            ${escapeHtml(item.status)} &bull; ${escapeHtml(item.lokasi)}
+                                        </span>
+                                    </td>
                                 </tr>
                             `).join('');
                         }
