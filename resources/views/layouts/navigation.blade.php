@@ -17,7 +17,7 @@
     <!-- Nav Item - Dashboard -->
     <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }} mt-2">
         <a class="nav-link" href="{{ route('dashboard') }}">
-            <i class="fas fa-th-large text-primary"></i>
+            <span class="nav-icon-badge badge-icon-primary"><i class="fas fa-th-large"></i></span>
             <span>Dashboard</span>
         </a>
     </li>
@@ -33,7 +33,7 @@
 
         <li class="nav-item {{ request()->routeIs('form-schedules.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-schedules.index') }}">
-                <i class="fas fa-calendar-check text-emerald-400"></i>
+                <span class="nav-icon-badge badge-icon-emerald"><i class="fas fa-calendar-check"></i></span>
                 <span>Form Schedule</span>
             </a>
         </li>
@@ -45,28 +45,28 @@
 
         <li class="nav-item {{ request()->routeIs('form-setup-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-setup-cetakans.index') }}">
-                <i class="fas fa-file-invoice text-indigo-400"></i>
+                <span class="nav-icon-badge badge-icon-indigo"><i class="fas fa-file-invoice"></i></span>
                 <span>Form Setup Cetakan</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-sandblastings.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-sandblastings.index') }}">
-                <i class="fas fa-bolt text-amber-400"></i>
+                <span class="nav-icon-badge badge-icon-amber"><i class="fas fa-bolt"></i></span>
                 <span>Form Sandblasting</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-repair-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-repair-cetakans.index') }}">
-                <i class="fas fa-wrench text-rose-400"></i>
+                <span class="nav-icon-badge badge-icon-rose"><i class="fas fa-wrench"></i></span>
                 <span>Form PEJO (Repair)</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-mjos.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-mjos.index') }}">
-                <i class="fas fa-tools text-sky-400"></i>
+                <span class="nav-icon-badge badge-icon-sky"><i class="fas fa-tools"></i></span>
                 <span>Form MJO</span>
             </a>
         </li>
@@ -81,21 +81,21 @@
 
         <li class="nav-item {{ request()->routeIs('reports.molds*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('reports.molds') }}">
-                <i class="fas fa-chart-line text-yellow-300"></i>
+                <span class="nav-icon-badge badge-icon-yellow"><i class="fas fa-chart-line"></i></span>
                 <span class="font-weight-extrabold text-white">Laporan Cetakan</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('penomoran-raks.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('penomoran-raks.index') }}">
-                <i class="fas fa-th-list text-purple-400"></i>
+                <span class="nav-icon-badge badge-icon-purple"><i class="fas fa-th-list"></i></span>
                 <span>Penomoran Rak</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('cetakan-naiks.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('cetakan-naiks.index') }}">
-                <i class="fas fa-arrow-circle-up text-emerald-400"></i>
+                <span class="nav-icon-badge badge-icon-emerald"><i class="fas fa-arrow-circle-up"></i></span>
                 <span>Cetakan Naik</span>
             </a>
         </li>
@@ -107,14 +107,14 @@
 
         <li class="nav-item {{ request()->routeIs('form-repair-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-repair-cetakans.index') }}">
-                <i class="fas fa-wrench text-rose-400"></i>
+                <span class="nav-icon-badge badge-icon-rose"><i class="fas fa-wrench"></i></span>
                 <span>Form PEJO (Repair)</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-mjos.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-mjos.index') }}">
-                <i class="fas fa-tools text-sky-400"></i>
+                <span class="nav-icon-badge badge-icon-sky"><i class="fas fa-tools"></i></span>
                 <span>Form MJO</span>
             </a>
         </li>
@@ -129,7 +129,7 @@
 
         <li class="nav-item {{ request()->routeIs('cetakan-naiks.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('cetakan-naiks.index') }}">
-                <i class="fas fa-arrow-circle-up text-emerald-400"></i>
+                <span class="nav-icon-badge badge-icon-emerald"><i class="fas fa-arrow-circle-up"></i></span>
                 <span>Cetakan Naik</span>
             </a>
         </li>
@@ -141,21 +141,21 @@
 
         <li class="nav-item {{ request()->routeIs('form-setup-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-setup-cetakans.index') }}">
-                <i class="fas fa-file-invoice text-indigo-400"></i>
+                <span class="nav-icon-badge badge-icon-indigo"><i class="fas fa-file-invoice"></i></span>
                 <span>Form Setup Cetakan</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-sandblastings.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-sandblastings.index') }}">
-                <i class="fas fa-bolt text-amber-400"></i>
+                <span class="nav-icon-badge badge-icon-amber"><i class="fas fa-bolt"></i></span>
                 <span>Form Sandblasting</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-schedules.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-schedules.index') }}">
-                <i class="fas fa-calendar-check text-emerald-400"></i>
+                <span class="nav-icon-badge badge-icon-emerald"><i class="fas fa-calendar-check"></i></span>
                 <span>Form Schedule</span>
             </a>
         </li>
@@ -170,7 +170,7 @@
 
         <li class="nav-item {{ request()->routeIs('penomoran-raks.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('penomoran-raks.index') }}">
-                <i class="fas fa-th-list text-purple-400"></i>
+                <span class="nav-icon-badge badge-icon-purple"><i class="fas fa-th-list"></i></span>
                 <span>Penomoran Rak</span>
             </a>
         </li>
@@ -182,14 +182,14 @@
 
         <li class="nav-item {{ request()->routeIs('form-repair-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-repair-cetakans.index') }}">
-                <i class="fas fa-wrench text-rose-400"></i>
+                <span class="nav-icon-badge badge-icon-rose"><i class="fas fa-wrench"></i></span>
                 <span>Form PEJO (Repair)</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-mjos.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-mjos.index') }}">
-                <i class="fas fa-tools text-sky-400"></i>
+                <span class="nav-icon-badge badge-icon-sky"><i class="fas fa-tools"></i></span>
                 <span>Form MJO</span>
             </a>
         </li>
@@ -201,7 +201,7 @@
 
         <li class="nav-item {{ request()->routeIs('form-mjos.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-mjos.index') }}">
-                <i class="fas fa-tools text-sky-400"></i>
+                <span class="nav-icon-badge badge-icon-sky"><i class="fas fa-tools"></i></span>
                 <span>Form MJO</span>
             </a>
         </li>
@@ -213,14 +213,14 @@
 
         <li class="nav-item {{ request()->routeIs('code-items.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('code-items.index') }}">
-                <i class="fas fa-cubes text-info"></i>
+                <span class="nav-icon-badge badge-icon-info"><i class="fas fa-cubes"></i></span>
                 <span>Code Item</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('mesins.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('mesins.index') }}">
-                <i class="fas fa-cogs text-warning"></i>
+                <span class="nav-icon-badge badge-icon-warning"><i class="fas fa-cogs"></i></span>
                 <span>Mesin</span>
             </a>
         </li>
@@ -235,35 +235,35 @@
 
         <li class="nav-item {{ request()->routeIs('form-setup-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-setup-cetakans.index') }}">
-                <i class="fas fa-file-invoice text-indigo-400"></i>
+                <span class="nav-icon-badge badge-icon-indigo"><i class="fas fa-file-invoice"></i></span>
                 <span>Form Setup Cetakan</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-sandblastings.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-sandblastings.index') }}">
-                <i class="fas fa-bolt text-amber-400"></i>
+                <span class="nav-icon-badge badge-icon-amber"><i class="fas fa-bolt"></i></span>
                 <span>Form Sandblasting</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-repair-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-repair-cetakans.index') }}">
-                <i class="fas fa-wrench text-rose-400"></i>
+                <span class="nav-icon-badge badge-icon-rose"><i class="fas fa-wrench"></i></span>
                 <span>Form PEJO (Repair)</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-mjos.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-mjos.index') }}">
-                <i class="fas fa-tools text-sky-400"></i>
+                <span class="nav-icon-badge badge-icon-sky"><i class="fas fa-tools"></i></span>
                 <span>Form MJO</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('form-schedules.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('form-schedules.index') }}">
-                <i class="fas fa-calendar-check text-emerald-400"></i>
+                <span class="nav-icon-badge badge-icon-emerald"><i class="fas fa-calendar-check"></i></span>
                 <span>Form Schedule</span>
             </a>
         </li>
@@ -278,35 +278,35 @@
 
         <li class="nav-item {{ request()->routeIs('reports.molds*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('reports.molds') }}">
-                <i class="fas fa-chart-line text-yellow-300"></i>
+                <span class="nav-icon-badge badge-icon-yellow"><i class="fas fa-chart-line"></i></span>
                 <span class="font-weight-extrabold text-white">Laporan Cetakan</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('penomoran-raks.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('penomoran-raks.index') }}">
-                <i class="fas fa-th-list text-purple-400"></i>
+                <span class="nav-icon-badge badge-icon-purple"><i class="fas fa-th-list"></i></span>
                 <span>Penomoran Rak</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('cetakan-naiks.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('cetakan-naiks.index') }}">
-                <i class="fas fa-arrow-circle-up text-emerald-400"></i>
+                <span class="nav-icon-badge badge-icon-emerald"><i class="fas fa-arrow-circle-up"></i></span>
                 <span>Cetakan Naik</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('history-cetakans.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('history-cetakans.index') }}">
-                <i class="fas fa-history text-cyan-400"></i>
+                <span class="nav-icon-badge badge-icon-teal"><i class="fas fa-history"></i></span>
                 <span>History Cetakan</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('kategoris.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('kategoris.index') }}">
-                <i class="fas fa-tags text-pink-400"></i>
+                <span class="nav-icon-badge badge-icon-pink"><i class="fas fa-tags"></i></span>
                 <span>Kategori</span>
             </a>
         </li>
@@ -321,49 +321,49 @@
 
         <li class="nav-item {{ request()->routeIs('list-code-items.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('list-code-items.index') }}">
-                <i class="fas fa-list-ol text-blue-300"></i>
+                <span class="nav-icon-badge badge-icon-blue"><i class="fas fa-list-ol"></i></span>
                 <span>List Code Item</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('set-code-items.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('set-code-items.index') }}">
-                <i class="fas fa-layer-group text-indigo-300"></i>
+                <span class="nav-icon-badge badge-icon-indigo"><i class="fas fa-layer-group"></i></span>
                 <span>Mold Set</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('cav-code-items.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('cav-code-items.index') }}">
-                <i class="fas fa-th text-teal-300"></i>
+                <span class="nav-icon-badge badge-icon-teal"><i class="fas fa-th"></i></span>
                 <span>Mold Cavity</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('list-mesins.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('list-mesins.index') }}">
-                <i class="fas fa-microchip text-amber-300"></i>
+                <span class="nav-icon-badge badge-icon-amber"><i class="fas fa-microchip"></i></span>
                 <span>List Mesin</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('name-mesins.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('name-mesins.index') }}">
-                <i class="fas fa-tag text-orange-300"></i>
+                <span class="nav-icon-badge badge-icon-orange"><i class="fas fa-tag"></i></span>
                 <span>Nama Mesin</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('class-mesins.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('class-mesins.index') }}">
-                <i class="fas fa-sitemap text-yellow-300"></i>
+                <span class="nav-icon-badge badge-icon-yellow"><i class="fas fa-sitemap"></i></span>
                 <span>Class Mesin</span>
             </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('list-raks.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('list-raks.index') }}">
-                <i class="fas fa-warehouse text-slate-300"></i>
+                <span class="nav-icon-badge badge-icon-slate"><i class="fas fa-warehouse"></i></span>
                 <span>Master List Rak</span>
             </a>
         </li>
@@ -378,7 +378,7 @@
 
         <li class="nav-item {{ request()->routeIs('users.*') || request()->routeIs('detail-users.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('users.index') }}">
-                <i class="fas fa-users-cog text-violet-400"></i>
+                <span class="nav-icon-badge badge-icon-violet"><i class="fas fa-users-cog"></i></span>
                 <span>Kelola User & Password</span>
             </a>
         </li>

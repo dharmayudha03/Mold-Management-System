@@ -417,20 +417,68 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
         }
 
-        .sidebar-dark .nav-item .nav-link i {
-            font-size: 0.95rem !important;
-            width: 22px !important;
-            text-align: center !important;
+        /* Vibrant Sidebar Icon Badges */
+        .sidebar-dark .nav-item .nav-link .nav-icon-badge {
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 0.55rem !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
             flex-shrink: 0 !important;
+            font-size: 0.825rem !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
         }
+
+        .sidebar-dark .nav-item .nav-link:hover .nav-icon-badge {
+            transform: scale(1.12);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .sidebar-dark .nav-item .nav-link .nav-icon-badge i {
+            font-size: 0.825rem !important;
+            width: auto !important;
+            text-align: center !important;
+            color: inherit !important;
+        }
+
+        /* Specific Vibrant Color Themes for Sidebar Icons */
+        .badge-icon-primary   { background: rgba(37, 99, 235, 0.25) !important; color: #60a5fa !important; }
+        .badge-icon-info      { background: rgba(6, 182, 212, 0.25) !important; color: #22d3ee !important; }
+        .badge-icon-warning   { background: rgba(245, 158, 11, 0.25) !important; color: #fbbf24 !important; }
+        .badge-icon-indigo    { background: rgba(99, 102, 241, 0.25) !important; color: #818cf8 !important; }
+        .badge-icon-amber     { background: rgba(217, 119, 6, 0.25) !important; color: #f59e0b !important; }
+        .badge-icon-rose      { background: rgba(244, 63, 94, 0.25) !important; color: #fb7185 !important; }
+        .badge-icon-sky       { background: rgba(14, 165, 233, 0.25) !important; color: #38bdf8 !important; }
+        .badge-icon-emerald   { background: rgba(16, 185, 129, 0.25) !important; color: #34d399 !important; }
+        .badge-icon-yellow    { background: rgba(234, 179, 8, 0.25) !important; color: #facc15 !important; }
+        .badge-icon-purple    { background: rgba(168, 85, 247, 0.25) !important; color: #c084fc !important; }
+        .badge-icon-teal      { background: rgba(20, 184, 166, 0.25) !important; color: #2dd4bf !important; }
+        .badge-icon-pink      { background: rgba(236, 72, 153, 0.25) !important; color: #f472b6 !important; }
+        .badge-icon-blue      { background: rgba(59, 130, 246, 0.25) !important; color: #60a5fa !important; }
+        .badge-icon-orange    { background: rgba(249, 115, 22, 0.25) !important; color: #fb923c !important; }
+        .badge-icon-slate     { background: rgba(148, 163, 184, 0.25) !important; color: #cbd5e1 !important; }
+        .badge-icon-violet    { background: rgba(139, 92, 246, 0.25) !important; color: #a78bfa !important; }
 
         .sidebar-heading {
             font-size: 0.65rem !important;
             letter-spacing: 0.08em !important;
-            color: #64748b !important;
-            font-weight: 800 !important;
+            color: #94a3b8 !important;
+            font-weight: 900 !important;
             text-transform: uppercase !important;
-            padding: 0.75rem 1rem 0.35rem 1rem !important;
+            padding: 0.85rem 1rem 0.35rem 1rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.4rem !important;
+        }
+
+        .sidebar-heading::before {
+            content: '';
+            display: inline-block;
+            width: 3.5px;
+            height: 11px;
+            background: #3b82f6;
+            border-radius: 2px;
         }
 
         /* High Contrast Typography */
