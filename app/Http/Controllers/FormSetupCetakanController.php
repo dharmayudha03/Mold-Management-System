@@ -154,13 +154,17 @@ class FormSetupCetakanController extends Controller
             }
         }
 
+        $existingNumbers = FormSetupCetakan::pluck('id')->toArray();
+        $nextNumber = empty($existingNumbers) ? 1 : max($existingNumbers) + 1;
+        $nodoc = 'DOC-SETUP' . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
+
         $operationalDate = $this->getFactoryOperationalDate();
         $user = auth()->user();
         $isReadonlyDate = $user && ($user->hasRole('Setup & Maintenance') || $user->hasRole('Setup') || $user->hasRole('Maintenance')) && !$user->hasRole('super_admin');
 
         return view('form-setup-cetakans.create', compact(
-            'roles', 'detailUsers', 'listCodeItems',
-            'listMesins', 'occupiedMesinIds', 'kategoris', 'selectedSchedule',
+            'roles', 'detailUsers', 'listCodeItems', 'setCodeItems', 'cavCodeItems',
+            'listMesins', 'occupiedMesinIds', 'kategoris', 'nodoc', 'formSchedules', 'selectedSchedule',
             'operationalDate', 'isReadonlyDate'
         ));
     }
