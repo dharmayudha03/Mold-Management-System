@@ -38,7 +38,7 @@
                             <label class="form-label text-purple-700 font-weight-bold"><i class="fas fa-calendar-alt mr-1"></i> Mengacu Ref. Schedule (Opsional)</label>
                             <select name="form_schedule_id" id="form_schedule_id" class="form-select bg-purple-50 border-purple-200">
                                 <option value="">-- Tanpa Referensi Schedule --</option>
-                                @foreach($formSchedules as $sch)
+                                @foreach(($formSchedules ?? []) as $sch)
                                     <option value="{{ $sch->id }}" {{ ($selectedSchedule && $selectedSchedule->id == $sch->id) ? 'selected' : '' }}
                                         data-codeitem="{{ $sch->list_code_item_id }}"
                                         data-set="{{ $sch->set_code_item_id }}"
