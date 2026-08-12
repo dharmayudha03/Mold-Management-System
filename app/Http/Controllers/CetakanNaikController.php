@@ -16,13 +16,7 @@ class CetakanNaikController extends Controller
     {
         $search = $request->input('search');
 
-        $activeListMesinIds = Mesin::where('status', 'Aktif')->pluck('list_mesin_id');
-
         $query = CetakanNaik::with(['listCodeItem', 'setCodeItem', 'cavCodeItem', 'listMesin']);
-
-        if ($activeListMesinIds->isNotEmpty()) {
-            $query->whereIn('list_mesin_id', $activeListMesinIds);
-        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -51,10 +45,8 @@ class CetakanNaikController extends Controller
         $setCodeItems = SetCodeItem::all();
         $cavCodeItems = CavCodeItem::all();
 
-        $activeListMesinIds = Mesin::where('status', 'Aktif')->pluck('list_mesin_id');
-        $listMesins = $activeListMesinIds->isNotEmpty()
-            ? ListMesin::whereIn('id', $activeListMesinIds)->get()
-            : ListMesin::all();
+        // Get complete list of all machines so no machine code is missing in dropdown
+        $listMesins = ListMesin::orderBy('id')->get();
 
         return view('cetakan-naiks.create', compact('listCodeItems', 'setCodeItems', 'cavCodeItems', 'listMesins'));
     }
@@ -82,10 +74,8 @@ class CetakanNaikController extends Controller
         $cavCodeItems = CavCodeItem::where('list_code_item_id', $cetakanNaik->list_code_item_id)
             ->where('set_code_item_id', $cetakanNaik->set_code_item_id)->get();
 
-        $activeListMesinIds = Mesin::where('status', 'Aktif')->pluck('list_mesin_id');
-        $listMesins = $activeListMesinIds->isNotEmpty()
-            ? ListMesin::whereIn('id', $activeListMesinIds)->get()
-            : ListMesin::all();
+        // Get complete list of all machines so no machine code is missing in dropdown
+        $listMesins = ListMesin::orderBy('id')->get();
 
         return view('cetakan-naiks.edit', compact('cetakanNaik', 'listCodeItems', 'setCodeItems', 'cavCodeItems', 'listMesins'));
     }

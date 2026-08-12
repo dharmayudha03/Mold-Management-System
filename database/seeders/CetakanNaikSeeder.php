@@ -107,6 +107,14 @@ class CetakanNaikSeeder extends Seeder
             array('list_code_item_id' => null, 'set_code_item_id' => null, 'cav_code_item_id' => null, 'list_mesin_id' => 145, 'tanggalnaik' => null, 'keterangan' => 'Tidak Produksi', 'note' => '-', 'created_at' => $timestamp, 'updated_at' => $timestamp),
             array('list_code_item_id' => null, 'set_code_item_id' => null, 'cav_code_item_id' => null, 'list_mesin_id' => 146, 'tanggalnaik' => null, 'keterangan' => 'Tidak Produksi', 'note' => '-', 'created_at' => $timestamp, 'updated_at' => $timestamp),
         );
+
+        $inactiveListMesinIds = DB::table('mesins')->where('status', 'Tidak Aktif')->pluck('list_mesin_id')->toArray();
+        if (!empty($inactiveListMesinIds)) {
+            $cetakanNaik = array_values(array_filter($cetakanNaik, function($item) use ($inactiveListMesinIds) {
+                return !in_array($item['list_mesin_id'], $inactiveListMesinIds);
+            }));
+        }
+
         DB::table('cetakan_naiks')->insert($cetakanNaik);
     }
 }
