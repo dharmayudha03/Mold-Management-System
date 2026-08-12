@@ -293,21 +293,24 @@
             position: fixed;
             inset: 0;
             background: rgba(15, 23, 42, 0.65);
-            z-index: 1040;
+            z-index: 99990 !important;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            transition: opacity 0.25s ease;
         }
         body.sidebar-mobile-open #sidebar-overlay {
-            display: block;
+            display: block !important;
         }
 
-        /* Mobile Sidebar Drawer Styling */
+        /* Mobile Sidebar Drawer Styling - 100% Guaranteed Visibility */
         @media (max-width: 768px) {
-            #accordionSidebar {
+            #accordionSidebar,
+            #accordionSidebar.toggled,
+            html.sidebar-collapsed #accordionSidebar,
+            body.sidebar-collapsed #accordionSidebar,
+            body.sidebar-toggled #accordionSidebar {
                 position: fixed !important;
-                left: -320px !important;
                 top: 0 !important;
+                left: -320px !important;
                 bottom: 0 !important;
                 height: 100vh !important;
                 width: 280px !important;
@@ -315,13 +318,43 @@
                 background: linear-gradient(180deg, #0b132b 0%, #1c2541 100%) !important;
                 box-shadow: 4px 0 25px rgba(0, 0, 0, 0.4) !important;
                 transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                z-index: 1050 !important;
+                z-index: 99999 !important;
                 overflow-y: auto !important;
-                padding-bottom: 2rem !important;
+                padding: 0 0 2rem 0 !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
             }
 
-            body.sidebar-mobile-open #accordionSidebar {
+            /* When Mobile Sidebar is OPEN */
+            body.sidebar-mobile-open #accordionSidebar,
+            body.sidebar-mobile-open #accordionSidebar.toggled,
+            body.sidebar-mobile-open.sidebar-collapsed #accordionSidebar {
                 left: 0 !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                width: 280px !important;
+                max-width: 82vw !important;
+            }
+
+            /* Override SB Admin 2 text hiding rules on mobile */
+            #accordionSidebar .nav-item .nav-link span,
+            #accordionSidebar .sidebar-heading,
+            #accordionSidebar .sidebar-brand-text,
+            #accordionSidebar.toggled .nav-item .nav-link span,
+            #accordionSidebar.toggled .sidebar-heading,
+            #accordionSidebar.toggled .sidebar-brand-text {
+                display: inline-block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                font-size: inherit !important;
+            }
+
+            #accordionSidebar.toggled .nav-item .nav-link {
+                text-align: left !important;
+                width: auto !important;
+                padding: 0.65rem 0.85rem !important;
             }
 
             /* Responsive Navbar Topbar on Mobile */
@@ -336,15 +369,6 @@
             #content-wrapper {
                 margin-left: 0 !important;
                 padding-top: 4.2rem !important;
-            }
-
-            /* Reset collapsed state overrides on mobile */
-            body.sidebar-collapsed #accordionSidebar {
-                width: 280px !important;
-                left: -320px !important;
-            }
-            body.sidebar-collapsed.sidebar-mobile-open #accordionSidebar {
-                left: 0 !important;
             }
         }
 
@@ -1014,8 +1038,14 @@
             }
         }
 
-        function toggleSidebar() {
+        function toggleSidebar(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             if (isMobile()) {
+                const sidebar = document.getElementById('accordionSidebar');
+                if (sidebar) sidebar.classList.remove('toggled');
                 document.body.classList.toggle('sidebar-mobile-open');
             } else {
                 const isCollapsed = document.documentElement.classList.toggle('sidebar-collapsed');
