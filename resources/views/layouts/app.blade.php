@@ -310,16 +310,17 @@
             body.sidebar-toggled #accordionSidebar {
                 position: fixed !important;
                 top: 0 !important;
-                left: -320px !important;
+                left: -330px !important;
                 bottom: 0 !important;
                 height: 100vh !important;
-                width: 280px !important;
-                max-width: 82vw !important;
+                width: 290px !important;
+                max-width: 86vw !important;
                 background: linear-gradient(180deg, #0b132b 0%, #1c2541 100%) !important;
-                box-shadow: 4px 0 25px rgba(0, 0, 0, 0.4) !important;
+                box-shadow: 6px 0 30px rgba(0, 0, 0, 0.45) !important;
                 transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
                 z-index: 99999 !important;
                 overflow-y: auto !important;
+                overflow-x: hidden !important;
                 padding: 0 0 2rem 0 !important;
                 display: block !important;
                 visibility: visible !important;
@@ -334,8 +335,8 @@
                 display: block !important;
                 visibility: visible !important;
                 opacity: 1 !important;
-                width: 280px !important;
-                max-width: 82vw !important;
+                width: 290px !important;
+                max-width: 86vw !important;
             }
 
             /* Override SB Admin 2 text hiding rules on mobile */
@@ -348,13 +349,18 @@
                 display: inline-block !important;
                 visibility: visible !important;
                 opacity: 1 !important;
-                font-size: inherit !important;
+                white-space: nowrap !important;
+                word-break: normal !important;
+                font-size: 0.84rem !important;
             }
 
+            #accordionSidebar .nav-item .nav-link,
             #accordionSidebar.toggled .nav-item .nav-link {
                 text-align: left !important;
-                width: auto !important;
+                width: calc(100% - 1rem) !important;
                 padding: 0.65rem 0.85rem !important;
+                white-space: nowrap !important;
+                word-break: normal !important;
             }
 
             /* Responsive Navbar Topbar on Mobile */
@@ -378,15 +384,24 @@
             align-items: center !important;
             gap: 0.75rem !important;
             padding: 0.65rem 0.85rem !important;
-            margin: 0.2rem 0.5rem !important;
+            margin: 0.25rem 0.5rem !important;
             border-radius: 0.65rem !important;
             color: #94a3b8 !important;
-            font-size: 0.83rem !important;
+            font-size: 0.84rem !important;
             font-weight: 700 !important;
-            line-height: 1.3 !important;
-            white-space: normal !important;
-            word-break: break-word !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+            word-break: normal !important;
+            width: calc(100% - 1rem) !important;
             transition: all 0.2s ease !important;
+        }
+
+        .sidebar-dark .nav-item .nav-link span {
+            display: inline-block !important;
+            white-space: nowrap !important;
+            word-break: normal !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
         }
 
         .sidebar-dark .nav-item .nav-link:hover {
